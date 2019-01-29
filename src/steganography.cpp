@@ -24,11 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  * @return A vector containing all the bytes from the payload file.
  */
 std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::path& payload_path) {
+    char byte;
     std::ifstream file(payload_path.string(), std::ios::binary);
     std::vector<unsigned char> payload;
 
     if (file.good()) {
-        for (char byte = file.get(); byte != -1; byte = file.get()) {
+        while (file.get(byte)) {
             payload.emplace_back(byte);
         }
     } else {
