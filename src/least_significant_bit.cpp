@@ -23,14 +23,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  * @param payload_path The path to the file you are encoding.
  */
 void LeastSignificantBit::Encode(const boost::filesystem::path& payload_path) {
+    std::string payload_filename = payload_path.filename().string();
+    std::vector<unsigned char> payload_filename_bytes(payload_filename.begin(), payload_filename.end());
 
+    this -> EncodeChunkLength(0, payload_filename_bytes.size());
+    this -> EncodeChunk(32, payload_filename_bytes);
+
+    std::vector<unsigned char> payload_bytes = this -> ReadPayload(payload_path);
+
+    this -> EncodeChunkLength(32 + payload_filename_bytes.size() * 8, payload_bytes.size());
+    this -> EncodeChunk(64 + payload_filename_bytes.size() * 8, payload_bytes);
+
+    boost::filesystem::path steg_image_filename = this -> image_path.filename();
+    steg_image_filename.replace_extension(".png");
+    cv::imwrite("steg-" + steg_image_filename.string(), this -> image, std::vector<int>{CV_IMWRITE_PNG_COMPRESSION, 9});
 }
 
 /**
  * Decode the payload from the carrier image.
  */
 void LeastSignificantBit::Decode() {
+    unsigned int payload_filename_length = this -> DecodeChunkLength(0);
 
+    std::vector<unsigned char> payload_filename_bytes = this -> DecodeChunk(32, 32 + payload_filename_length * 8);
+    std::string payload_filename(payload_filename_bytes.begin(), payload_filename_bytes.end());
+
+    unsigned int payload_length = this -> DecodeChunkLength(32 + payload_filename_length * 8);
+    std::vector<unsigned char> payload_bytes = this -> DecodeChunk(64 + payload_filename_length * 8, 64 + payload_filename_length * 8 + payload_length * 8);
+
+    this -> WritePayload("steg-" + payload_filename, payload_bytes);
 }
 
 /**
