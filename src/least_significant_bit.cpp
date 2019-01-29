@@ -173,6 +173,8 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
             }
         }
     }
+
+    return std::vector<unsigned char> {}; // This "should" not be reached
 }
 
 /**
@@ -215,6 +217,8 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
             }
         }
     }
+
+    return 0; // This "should" not be reached
 }
 
 /**
