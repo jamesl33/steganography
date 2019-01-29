@@ -23,17 +23,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  * @param payload_path The path to the file you are encoding.
  */
 void LeastSignificantBit::Encode(const boost::filesystem::path& payload_path) {
+    // Convert the payload filename to byte vector.
     std::string payload_filename = payload_path.filename().string();
     std::vector<unsigned char> payload_filename_bytes(payload_filename.begin(), payload_filename.end());
 
+    // Encode the length/content of the filename in the carrier image.
     this -> EncodeChunkLength(0, payload_filename_bytes.size());
     this -> EncodeChunk(32, payload_filename_bytes);
 
+    // Read the payload into a byte vector.
     std::vector<unsigned char> payload_bytes = this -> ReadPayload(payload_path);
 
+    // Encode the length/content of the payload in the carrier image.
     this -> EncodeChunkLength(32 + payload_filename_bytes.size() * 8, payload_bytes.size());
     this -> EncodeChunk(64 + payload_filename_bytes.size() * 8, payload_bytes);
 
+    // Save the modified image with the "steg-" prefix.
     boost::filesystem::path steg_image_filename = this -> image_path.filename();
     steg_image_filename.replace_extension(".png");
     cv::imwrite("steg-" + steg_image_filename.string(), this -> image, std::vector<int>{CV_IMWRITE_PNG_COMPRESSION, 9});
@@ -43,14 +48,18 @@ void LeastSignificantBit::Encode(const boost::filesystem::path& payload_path) {
  * Decode the payload from the carrier image.
  */
 void LeastSignificantBit::Decode() {
+    // Decode the filename byte vector from the carrier image.
     unsigned int payload_filename_length = this -> DecodeChunkLength(0);
-
     std::vector<unsigned char> payload_filename_bytes = this -> DecodeChunk(32, 32 + payload_filename_length * 8);
+
+    // Convert the payload filename to a string.
     std::string payload_filename(payload_filename_bytes.begin(), payload_filename_bytes.end());
 
+    // Decode the payload byte vector from the carrier image.
     unsigned int payload_length = this -> DecodeChunkLength(32 + payload_filename_length * 8);
     std::vector<unsigned char> payload_bytes = this -> DecodeChunk(64 + payload_filename_length * 8, 64 + payload_filename_length * 8 + payload_length * 8);
 
+    // Save the payload to it's filename with the "steg-" prefix.
     this -> WritePayload("steg-" + payload_filename, payload_bytes);
 }
 
@@ -65,6 +74,7 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
     int bits_written = 0;
     std::queue<unsigned char> chunk_bytes;
 
+    // Copy the chunk into a queue
     for (unsigned char byte : chunk) {
         chunk_bytes.emplace(byte);
     }
@@ -93,8 +103,10 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
                         bits_written++;
 
                         if (chunk_bytes.empty()) {
+                            // There is nothing left to encode.
                             return;
                         } else if (bits_written % 8 == 0) {
+                            // We have encoded a full byte now, pop it from the queue.
                             chunk_bytes.pop();
                         }
                     }
@@ -120,6 +132,7 @@ void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int
         for (int col = 0; col < this -> image.cols; col++) {
             for (int cha = 0; cha < this -> image.channels(); cha++) {
                 if (bits_written == 32) {
+                    // We only need to encode a 32bit integer, stop once complete.
                     return;
                 }
 
@@ -183,8 +196,10 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
                         bits_read++;
 
                         if (bits_read == end - start) {
+                            // We have decoded all of the bytes.
                             return chunk_bytes;
                         } else if (bits_read % 8 == 0) {
+                            // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
                             chunk_bytes.emplace_back(0);
                         }
                     }
@@ -213,6 +228,7 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
         for (int col = 0; col < this -> image.cols; col++) {
             for (int cha = 0; cha < this -> image.channels(); cha++) {
                 if (bits_read == 32) {
+                    // We only need to encode a 32bit integer, stop once complete.
                     return chunk_length;
                 }
 
