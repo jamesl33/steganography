@@ -111,7 +111,7 @@ void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int
                                 break;
                             }
                             case 4: {
-                                this -> SetBit(&this -> image.at<cv::Vec3b>(col, row)[cha], bit, this -> GetBit(chunk_length, bits_written));
+                                this -> SetBit(&this -> image.at<cv::Vec4b>(col, row)[cha], bit, this -> GetBit(chunk_length, bits_written));
                                 break;
                             }
                         }
