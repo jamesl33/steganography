@@ -40,7 +40,49 @@ void LeastSignificantBit::Decode() {
  * @param chunk The chunk of information that will be encoded into the carrier image.
  */
 void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsigned char>& chunk) {
+    int bit_index = 0;
+    int bits_written = 0;
+    std::queue<unsigned char> chunk_bytes;
 
+    for (unsigned char byte : chunk) {
+        chunk_bytes.emplace(byte);
+    }
+
+    for (int col = 0; col < this -> image.cols; col++) {
+        for (int row = 0; row < this -> image.rows; row++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (chunk_bytes.empty()) {
+                    return;
+                }
+
+                if (bit_index >= start) {
+                    // TODO(James Lee) - Expose this option to the user.
+                    for (int bit = 0; bit < 1; bit++) {
+                        switch (this -> image.channels()) {
+                            case 3: {
+                                this -> SetBit(&this -> image.at<cv::Vec3b>(col, row)[cha], bit, this -> GetBit(chunk_bytes.front(), bits_written % 8));
+                                break;
+                            }
+                            case 4: {
+                                this -> SetBit(&this -> image.at<cv::Vec4b>(col, row)[cha], bit, this -> GetBit(chunk_bytes.front(), bits_written % 8));
+                                break;
+                            }
+                        }
+
+                        bits_written++;
+
+                        if (chunk_bytes.empty()) {
+                            return;
+                        } else if (bits_written % 8 == 0) {
+                            chunk_bytes.pop();
+                        }
+                    }
+                }
+
+                bit_index++;
+            }
+        }
+    }
 }
 
 /**
@@ -92,7 +134,45 @@ void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int
  * @return The chunk of information read from the carrier image.
  */
 std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, const int& end) {
+    int bit_index = 0;
+    int bits_read = 0;
+    std::vector<unsigned char> chunk_bytes = {0};
 
+    for (int col = 0; col < this -> image.cols; col++) {
+        for (int row = 0; row < this -> image.rows; row++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (bit_index == end) {
+                    return chunk_bytes;
+                }
+
+                if (bit_index >= start) {
+                    // TODO(James Lee) - Expose this option to the user.
+                    for (int bit = 0; bit < 1; bit++) {
+                        switch (this -> image.channels()) {
+                            case 3: {
+                                this -> SetBit(&chunk_bytes.back(), bits_read % 8, this -> GetBit(this -> image.at<cv::Vec3b>(col, row)[cha], bit));
+                                break;
+                            }
+                            case 4: {
+                                this -> SetBit(&chunk_bytes.back(), bits_read % 8, this -> GetBit(this -> image.at<cv::Vec4b>(col, row)[cha], bit));
+                                break;
+                            }
+                        }
+
+                        bits_read++;
+
+                        if (bits_read == end - start) {
+                            return chunk_bytes;
+                        } else if (bits_read % 8 == 0) {
+                            chunk_bytes.emplace_back(0);
+                        }
+                    }
+                }
+
+                bit_index++;
+            }
+        }
+    }
 }
 
 /**
