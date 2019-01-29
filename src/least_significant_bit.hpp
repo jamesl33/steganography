@@ -36,7 +36,10 @@ class LeastSignificantBit : public Steganography {
         unsigned int DecodeChunkLength(const int&);
 
         void SetBit(unsigned char*, const int&, const int&);
-        int GetBit(unsigned char&, const int&);
+        void SetBit(unsigned int*, const int&, const int&);
+
+        int GetBit(const unsigned char&, const int&);
+        int GetBit(const unsigned int&, const int&);
 };
 
 #endif // LEAST_SIGNIFICANT_BIT_HPP

@@ -50,7 +50,38 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
  * @param chunk_length The length of the next chunk in bytes.
  */
 void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int& chunk_length) {
+    int bit_index = 0;
+    int bits_written = 0;
 
+    for (int col = 0; col < this -> image.cols; col++) {
+        for (int row = 0; row < this -> image.rows; row++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (bits_written == 32) {
+                    return;
+                }
+
+                if (bit_index >= start) {
+                    // TODO(James Lee) - Expose this option to the user.
+                    for (int bit = 0; bit < 1; bit++) {
+                        switch (this -> image.channels()) {
+                            case 3: {
+                                this -> SetBit(&this -> image.at<cv::Vec3b>(col, row)[cha], bit, this -> GetBit(chunk_length, bits_written));
+                                break;
+                            }
+                            case 4: {
+                                this -> SetBit(&this -> image.at<cv::Vec3b>(col, row)[cha], bit, this -> GetBit(chunk_length, bits_written));
+                                break;
+                            }
+                        }
+
+                        bits_written++;
+                    }
+                }
+
+                bit_index++;
+            }
+        }
+    }
 }
 
 /**
@@ -71,7 +102,39 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
  * @return The length of the next chunk in bytes.
  */
 unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
+    int bits_read = 0;
+    int bit_index = 0;
+    unsigned int chunk_length = 0;
 
+    for (int col = 0; col < this -> image.cols; col++) {
+        for (int row = 0; row < this -> image.rows; row++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (bits_read == 32) {
+                    return chunk_length;
+                }
+
+                if (bit_index >= start) {
+                    // TODO(James Lee) - Expose this option to the user.
+                    for (int bit = 0; bit < 1; bit++) {
+                        switch (this -> image.channels()) {
+                            case 3: {
+                                this -> SetBit(&chunk_length, bits_read, this -> GetBit(this -> image.at<cv::Vec3b>(col, row)[cha], bit));
+                                break;
+                            }
+                            case 4: {
+                                this -> SetBit(&chunk_length, bits_read, this -> GetBit(this -> image.at<cv::Vec4b>(col, row)[cha], bit));
+                                break;
+                            }
+                        }
+
+                        bits_read++;
+                    }
+                }
+
+                bit_index++;
+            }
+        }
+    }
 }
 
 /**
@@ -89,6 +152,20 @@ void LeastSignificantBit::SetBit(unsigned char* byte, const int& bit, const int&
 }
 
 /**
+ * Set the n'th significant bit in an unsinged integer.
+ *
+ * This function assumes that it is being used correctly; there is no incorrect
+ * input detection.
+ *
+ * @param integer The unsigned int you are modifying.
+ * @param bit The bit you are setting.
+ * @param value The value the bit will be set too.
+ */
+void LeastSignificantBit::SetBit(unsigned int* integer, const int& bit, const int& value) {
+    *integer ^= (-(unsigned int)value ^ *integer) & (1UL << bit);
+}
+
+/**
  * Get the n'th bit in an unsigned char.
  *
  * This function assumes that it is being used correctly; there is no incorrect
@@ -98,6 +175,20 @@ void LeastSignificantBit::SetBit(unsigned char* byte, const int& bit, const int&
  * @param bit The bit you are checking.
  * @return The status of the n'th bit.
  */
-int LeastSignificantBit::GetBit(unsigned char& byte, const int& bit) {
-    return (byte >> bit) & 1U;
+int LeastSignificantBit::GetBit(const unsigned char& byte, const int& bit) {
+    return (byte >> bit) & 1UL;
+}
+
+/**
+ * Get the n'th bit in an unsigned int.
+ *
+ * This function assumes that it is being used correctly; there is no incorrect
+ * input detection.
+ *
+ * @param byte The unsigned int you are checking.
+ * @param bit The bit you are checking.
+ * @return The status of the n'th bit.
+ */
+int LeastSignificantBit::GetBit(const unsigned int& integer, const int& bit) {
+    return (integer >> bit) & 1UL;
 }
