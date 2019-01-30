@@ -269,7 +269,7 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
  * @param value The value the target bit will be set too.
  */
 template <class T>
-void LeastSignificantBit::SetBit(T* target, const int& bit, const int& value) {
+inline void LeastSignificantBit::SetBit(T* target, const int& bit, const int& value) {
     *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
 }
 
@@ -284,6 +284,6 @@ void LeastSignificantBit::SetBit(T* target, const int& bit, const int& value) {
  * @param value The value the target bit will be set too.
  */
 template <class T>
-int LeastSignificantBit::GetBit(const T& target, const int& bit) {
+inline int LeastSignificantBit::GetBit(const T& target, const int& bit) {
     return (target >> bit) & 1UL;
 }

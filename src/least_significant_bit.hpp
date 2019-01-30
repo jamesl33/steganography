@@ -37,10 +37,10 @@ class LeastSignificantBit : public Steganography {
         unsigned int DecodeChunkLength(const int&);
 
         template<class T>
-        void SetBit(T*, const int&, const int&);
+        inline void SetBit(T*, const int&, const int&);
 
         template<class T>
-        int GetBit(const T&, const int&);
+        inline int GetBit(const T&, const int&);
 };
 
 #endif // LEAST_SIGNIFICANT_BIT_HPP
