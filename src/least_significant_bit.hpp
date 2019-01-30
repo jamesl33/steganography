@@ -36,11 +36,11 @@ class LeastSignificantBit : public Steganography {
         std::vector<unsigned char> DecodeChunk(const int&, const int&);
         unsigned int DecodeChunkLength(const int&);
 
-        void SetBit(unsigned char*, const int&, const int&);
-        void SetBit(unsigned int*, const int&, const int&);
+        template<class T>
+        void SetBit(T*, const int&, const int&);
 
-        int GetBit(const unsigned char&, const int&);
-        int GetBit(const unsigned int&, const int&);
+        template<class T>
+        int GetBit(const T&, const int&);
 };
 
 #endif // LEAST_SIGNIFICANT_BIT_HPP

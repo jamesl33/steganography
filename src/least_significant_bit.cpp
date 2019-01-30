@@ -259,57 +259,31 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
 }
 
 /**
- * Set the n'th significant bit in an unsigned char.
+ * Set the n'th significant bit of a generic type.
  *
- * This function assumes that it is being used correctly; there is no incorrect
- * input detection.
+ * This function is designed to set the n'th significant bit of integer/char types.
+ * It assumes that it is being used correctly; there is no incorrect input detection.
  *
- * @param byte The unsigned char you are modifying.
- * @param bit The bit you are setting.
- * @param value The value the bit will be set too.
+ * @param target "Any" type which works with bytewise operators, the target to set the bit of.
+ * @param bit Which bit to set in the target.
+ * @param value The value the target bit will be set too.
  */
-void LeastSignificantBit::SetBit(unsigned char* byte, const int& bit, const int& value) {
-    *byte ^= (-(unsigned int)value ^ *byte) & (1UL << bit);
+template <class T>
+void LeastSignificantBit::SetBit(T* target, const int& bit, const int& value) {
+    *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
 }
 
 /**
- * Set the n'th significant bit in an unsinged integer.
+ * Get the n'th significant bit of a generic type.
  *
- * This function assumes that it is being used correctly; there is no incorrect
- * input detection.
+ * This function is designed to get the n'th significant bit of integer/char types.
+ * It assumes that it is being used correctly; there is no incorrect input detection.
  *
- * @param integer The unsigned int you are modifying.
- * @param bit The bit you are setting.
- * @param value The value the bit will be set too.
+ * @param target "Any" type which works with bytewise operators, the target to set the but of.
+ * @param bit Which bit to set in the targer.
+ * @param value The value the target bit will be set too.
  */
-void LeastSignificantBit::SetBit(unsigned int* integer, const int& bit, const int& value) {
-    *integer ^= (-(unsigned int)value ^ *integer) & (1UL << bit);
-}
-
-/**
- * Get the n'th bit in an unsigned char.
- *
- * This function assumes that it is being used correctly; there is no incorrect
- * input detection.
- *
- * @param byte The unsigned char you are checking.
- * @param bit The bit you are checking.
- * @return The status of the n'th bit.
- */
-int LeastSignificantBit::GetBit(const unsigned char& byte, const int& bit) {
-    return (byte >> bit) & 1UL;
-}
-
-/**
- * Get the n'th bit in an unsigned int.
- *
- * This function assumes that it is being used correctly; there is no incorrect
- * input detection.
- *
- * @param byte The unsigned int you are checking.
- * @param bit The bit you are checking.
- * @return The status of the n'th bit.
- */
-int LeastSignificantBit::GetBit(const unsigned int& integer, const int& bit) {
-    return (integer >> bit) & 1UL;
+template <class T>
+int LeastSignificantBit::GetBit(const T& target, const int& bit) {
+    return (target >> bit) & 1UL;
 }
