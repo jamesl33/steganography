@@ -51,7 +51,7 @@ $(OBJ_LST) : $(BUILD_DIR)/%.o : $(SRC_DIR)/%.$(SRC_EXT) $(INC_LST)
 
 .PHONY: configure
 configure:
-	@$(CURL) https://raw.githubusercontent.com/myint/optparse/master/optparse.h --output $(SRC_DIR)/optparse.hpp
+	@$(CURL) https://raw.githubusercontent.com/myint/optparse/v1.0/optparse.h --output $(SRC_DIR)/optparse.hpp
 
 .PHONY: clean
 clean:
