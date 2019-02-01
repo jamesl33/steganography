@@ -87,8 +87,7 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
                 }
 
                 if (bit_index >= start) {
-                    // TODO(James Lee) - Expose this option to the user.
-                    for (int bit = 0; bit < 1; bit++) {
+                    for (int bit = 0; bit < this -> bit_depth; bit++) {
                         switch (this -> image.channels()) {
                             case 3: {
                                 this -> SetBit(&this -> image.at<cv::Vec3b>(row, col)[cha], bit, this -> GetBit(chunk_bytes.front(), bits_written % 8));
@@ -137,8 +136,7 @@ void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int
                 }
 
                 if (bit_index >= start) {
-                    // TODO(James Lee) - Expose this option to the user.
-                    for (int bit = 0; bit < 1; bit++) {
+                    for (int bit = 0; bit < this -> bit_depth; bit++) {
                         switch (this -> image.channels()) {
                             case 3: {
                                 this -> SetBit(&this -> image.at<cv::Vec3b>(row, col)[cha], bit, this -> GetBit(chunk_length, bits_written));
@@ -180,8 +178,7 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
                 }
 
                 if (bit_index >= start) {
-                    // TODO(James Lee) - Expose this option to the user.
-                    for (int bit = 0; bit < 1; bit++) {
+                    for (int bit = 0; bit < this -> bit_depth; bit++) {
                         switch (this -> image.channels()) {
                             case 3: {
                                 this -> SetBit(&chunk_bytes.back(), bits_read % 8, this -> GetBit(this -> image.at<cv::Vec3b>(row, col)[cha], bit));
@@ -233,8 +230,7 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
                 }
 
                 if (bit_index >= start) {
-                    // TODO(James Lee) - Expose this option to the user.
-                    for (int bit = 0; bit < 1; bit++) {
+                    for (int bit = 0; bit < this -> bit_depth; bit++) {
                         switch (this -> image.channels()) {
                             case 3: {
                                 this -> SetBit(&chunk_length, bits_read, this -> GetBit(this -> image.at<cv::Vec3b>(row, col)[cha], bit));

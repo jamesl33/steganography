@@ -30,9 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  */
 class Steganography {
     public:
-        explicit Steganography(const boost::filesystem::path& image_path) {
+        explicit Steganography(const boost::filesystem::path& image_path, int bit_depth) {
             this -> image_path = image_path;
             this -> image = cv::imread(image_path.string(), -1);
+            this -> bit_depth = bit_depth;
 
             if (!this -> image.data) {
                 std::cerr << "Error: Failed to open input image" << std::endl;
@@ -45,6 +46,7 @@ class Steganography {
     protected:
         boost::filesystem::path image_path;
         cv::Mat image;
+        int bit_depth;
 
         std::vector<unsigned char> ReadPayload(const boost::filesystem::path&);
         void WritePayload(const boost::filesystem::path&, const std::vector<unsigned char>&);

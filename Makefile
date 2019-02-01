@@ -34,6 +34,7 @@ SRC_LST = $(wildcard $(SRC_DIR)/*.$(SRC_EXT))
 INC_LST = $(wildcard $(SRC_DIR)/*.$(INC_EXT))
 OBJ_LST = $(SRC_LST:$(SRC_DIR)/%.$(SRC_EXT)=$(BUILD_DIR)/%.o)
 
+CURL = curl --silent --create-dirs
 ECHO = echo
 MKDIR = mkdir --parent
 RM = rm -rf
@@ -48,6 +49,10 @@ $(OBJ_LST) : $(BUILD_DIR)/%.o : $(SRC_DIR)/%.$(SRC_EXT) $(INC_LST)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@$(ECHO) "Successfully compiled '"$<"' to '"$@"'"
 
+.PHONY: configure
+configure:
+	@$(CURL) https://raw.githubusercontent.com/myint/optparse/master/optparse.h --output $(SRC_DIR)/optparse.hpp
+
 .PHONY: clean
 clean:
 	@$(RM) $(OBJ_LST)
@@ -58,3 +63,8 @@ remove: clean
 	@$(RM) $(BUILD_DIR)
 	@$(RM) $(BIN_DIR)
 	@$(ECHO) "Successfully removed temporary directories"
+
+.PHONY: purge
+purge: remove
+	@$(RM) $(SRC_DIR)/optparse.hpp
+	@$(ECHO) "Successfully removed external libraries"

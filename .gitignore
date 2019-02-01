@@ -34,3 +34,6 @@
 # Compilation directories
 bin/
 build/
+
+# External libraries
+src/optparse.hpp
