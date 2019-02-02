@@ -3,14 +3,24 @@ cmake_minimum_required(VERSION 3.0)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 file(DOWNLOAD https://raw.githubusercontent.com/myint/optparse/v1.0/optparse.h include/optparse.hpp)
+file(DOWNLOAD https://raw.githubusercontent.com/catchorg/Catch2/v2.6.0/single_include/catch2/catch.hpp include/catch.hpp)
 
 include_directories(include)
 
-file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+set(SOURCE_FILES
+    src/least_significant_bit.cpp
+    src/steganography.cpp
+)
 
-add_executable(steganography ${SOURCE_FILES})
+set(TEST_FILES
+
+)
+
+add_executable(steganography src/main.cpp ${SOURCE_FILES})
+add_executable(steganography-test test/main.cpp ${SOURCE_FILES} ${TEST_FILES})
 
 find_package(Boost REQUIRED filesystem)
 find_package(OpenCV REQUIRED)
 
 target_link_libraries(steganography ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(steganography-test ${Boost_LIBRARIES} ${OpenCV_LIBS})

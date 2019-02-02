@@ -36,4 +36,5 @@ bin/
 build/
 
 # External libraries
+include/catch.hpp
 include/optparse.hpp
