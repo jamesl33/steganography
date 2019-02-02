@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <string>
-#include "optparse.hpp"
+#include <optparse.hpp>
 #include "least_significant_bit.hpp"
 
 void help(optparse::OptionParser parser, std::string command) {

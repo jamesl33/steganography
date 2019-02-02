@@ -36,4 +36,4 @@ bin/
 build/
 
 # External libraries
-src/optparse.hpp
+include/
