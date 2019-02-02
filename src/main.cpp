@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     const std::vector<std::string> arguments = parser.args();
 
     if (arguments.size() == 0) {
-        std::cout << parser.format_help() << std::endl;
+        std::cout << parser.format_help();
         exit(0);
     }
 
