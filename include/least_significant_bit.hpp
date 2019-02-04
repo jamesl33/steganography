@@ -27,7 +27,7 @@ class LeastSignificantBit : public Steganography {
 
         void Encode(const boost::filesystem::path&);
         void Decode();
-    protected:
+    private:
         int data_bit;
 
         void EncodeChunk(const int&, const std::vector<unsigned char>&);
