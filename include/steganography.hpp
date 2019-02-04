@@ -32,7 +32,7 @@ class Steganography {
     public:
         explicit Steganography(const boost::filesystem::path& image_path, int bit_depth) {
             this -> image_path = image_path;
-            this -> image = cv::imread(image_path.string(), -1);
+            this -> image = cv::imread(image_path.string(), cv::IMREAD_UNCHANGED);
             this -> bit_depth = bit_depth;
 
             if (!this -> image.data) {
