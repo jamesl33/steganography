@@ -66,8 +66,8 @@ int main(int argc, char **argv) {
         }
     } else if (arguments[0] == "en" || arguments[0] == "encode") {
         if (arguments.size() == 3) {
-            LeastSignificantBit lsb = LeastSignificantBit(arguments[1], options.get("depth"));
-            lsb.Encode(arguments[2]);
+            LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
+            lsb.Encode(arguments[1]);
         } else {
             help(parser, "encode");
         }
