@@ -78,9 +78,15 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
         chunk_bytes.emplace(byte);
     }
 
-    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
-        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
-            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
+    for (int row = 0; row < this -> image.rows; row++) {
+        for (int col = 0; col < this -> image.cols; col++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (row  == 0 && col == 0 && cha == 0) {
+                    row = (start / this -> image.channels()) / this -> image.rows;
+                    col = (start / this -> image.channels() % this -> image.cols);
+                    cha = (start % this -> image.channels());
+                }
+
                 if (chunk_bytes.empty()) {
                     return;
                 }
@@ -122,9 +128,15 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
 void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int& chunk_length) {
     int bits_written = 0;
 
-    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
-        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
-            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
+    for (int row = 0; row < this -> image.rows; row++) {
+        for (int col = 0; col < this -> image.cols; col++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (row  == 0 && col == 0 && cha == 0) {
+                    row = (start / this -> image.channels()) / this -> image.rows;
+                    col = (start / this -> image.channels() % this -> image.cols);
+                    cha = (start % this -> image.channels());
+                }
+
                 if (bits_written == 32) {
                     // We only need to encode a 32bit integer, stop once complete.
                     return;
@@ -160,9 +172,15 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
     int bits_read = 0;
     std::vector<unsigned char> chunk_bytes = {0};
 
-    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
-        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
-            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
+    for (int row = 0; row < this -> image.rows; row++) {
+        for (int col = 0; col < this -> image.cols; col++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (row  == 0 && col == 0 && cha == 0) {
+                    row = (start / this -> image.channels()) / this -> image.rows;
+                    col = (start / this -> image.channels() % this -> image.cols);
+                    cha = (start % this -> image.channels());
+                }
+
                 if (bits_read == end - start) {
                     return chunk_bytes;
                 }
@@ -206,9 +224,15 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
     int bits_read = 0;
     unsigned int chunk_length = 0;
 
-    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
-        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
-            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
+    for (int row = 0; row < this -> image.rows; row++) {
+        for (int col = 0; col < this -> image.cols; col++) {
+            for (int cha = 0; cha < this -> image.channels(); cha++) {
+                if (row  == 0 && col == 0 && cha == 0) {
+                    row = (start / this -> image.channels()) / this -> image.rows;
+                    col = (start / this -> image.channels() % this -> image.cols);
+                    cha = (start % this -> image.channels());
+                }
+
                 if (bits_read == 32) {
                     // We only need to encode a 32bit integer, stop once complete.
                     return chunk_length;
