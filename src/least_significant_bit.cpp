@@ -70,7 +70,6 @@ void LeastSignificantBit::Decode() {
  * @param chunk The chunk of information that will be encoded into the carrier image.
  */
 void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsigned char>& chunk) {
-    int bit_index = 0;
     int bits_written = 0;
     std::queue<unsigned char> chunk_bytes;
 
@@ -79,39 +78,36 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
         chunk_bytes.emplace(byte);
     }
 
-    for (int row = 0; row < this -> image.rows; row++) {
-        for (int col = 0; col < this -> image.cols; col++) {
-            for (int cha = 0; cha < this -> image.channels(); cha++) {
+    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
+        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
+            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
                 if (chunk_bytes.empty()) {
                     return;
                 }
 
-                if (bit_index >= start) {
-                    for (int bit = 0; bit < this -> bit_depth; bit++) {
-                        switch (this -> image.channels()) {
-                            case 3: {
-                                this -> SetBit(&this -> image.at<cv::Vec3b>(row, col)[cha], bit, this -> GetBit(chunk_bytes.front(), bits_written % 8));
-                                break;
-                            }
-                            case 4: {
-                                this -> SetBit(&this -> image.at<cv::Vec4b>(row, col)[cha], bit, this -> GetBit(chunk_bytes.front(), bits_written % 8));
-                                break;
-                            }
+                for (int bit = 0; bit < this -> bit_depth; bit++) {
+                    switch (this -> image.channels()) {
+                        case 3: {
+                            this -> SetBit(&this -> image.at<cv::Vec3b>(row, col)[cha], bit, this -> GetBit(chunk_bytes.front(), bits_written % 8));
+                            break;
                         }
-
-                        bits_written++;
-
-                        if (chunk_bytes.empty()) {
-                            // There is nothing left to encode.
-                            return;
-                        } else if (bits_written % 8 == 0) {
-                            // We have encoded a full byte now, pop it from the queue.
-                            chunk_bytes.pop();
+                        case 4: {
+                            this -> SetBit(&this -> image.at<cv::Vec4b>(row, col)[cha], bit, this -> GetBit(chunk_bytes.front(), bits_written % 8));
+                            break;
                         }
+                    }
+
+                    bits_written++;
+
+                    if (chunk_bytes.empty()) {
+                        // There is nothing left to encode.
+                        return;
+                    } else if (bits_written % 8 == 0) {
+                        // We have encoded a full byte now, pop it from the queue.
+                        chunk_bytes.pop();
                     }
                 }
 
-                bit_index++;
             }
         }
     }
@@ -124,35 +120,30 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
  * @param chunk_length The length of the next chunk in bytes.
  */
 void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int& chunk_length) {
-    int bit_index = 0;
     int bits_written = 0;
 
-    for (int row = 0; row < this -> image.rows; row++) {
-        for (int col = 0; col < this -> image.cols; col++) {
-            for (int cha = 0; cha < this -> image.channels(); cha++) {
+    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
+        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
+            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
                 if (bits_written == 32) {
                     // We only need to encode a 32bit integer, stop once complete.
                     return;
                 }
 
-                if (bit_index >= start) {
-                    for (int bit = 0; bit < this -> bit_depth; bit++) {
-                        switch (this -> image.channels()) {
-                            case 3: {
-                                this -> SetBit(&this -> image.at<cv::Vec3b>(row, col)[cha], bit, this -> GetBit(chunk_length, bits_written));
-                                break;
-                            }
-                            case 4: {
-                                this -> SetBit(&this -> image.at<cv::Vec4b>(row, col)[cha], bit, this -> GetBit(chunk_length, bits_written));
-                                break;
-                            }
+                for (int bit = 0; bit < this -> bit_depth; bit++) {
+                    switch (this -> image.channels()) {
+                        case 3: {
+                            this -> SetBit(&this -> image.at<cv::Vec3b>(row, col)[cha], bit, this -> GetBit(chunk_length, bits_written));
+                            break;
                         }
-
-                        bits_written++;
+                        case 4: {
+                            this -> SetBit(&this -> image.at<cv::Vec4b>(row, col)[cha], bit, this -> GetBit(chunk_length, bits_written));
+                            break;
+                        }
                     }
-                }
 
-                bit_index++;
+                    bits_written++;
+                }
             }
         }
     }
@@ -166,43 +157,38 @@ void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int
  * @return The chunk of information read from the carrier image.
  */
 std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, const int& end) {
-    int bit_index = 0;
     int bits_read = 0;
     std::vector<unsigned char> chunk_bytes = {0};
 
-    for (int row = 0; row < this -> image.rows; row++) {
-        for (int col = 0; col < this -> image.cols; col++) {
-            for (int cha = 0; cha < this -> image.channels(); cha++) {
-                if (bit_index == end) {
+    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
+        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
+            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
+                if (bits_read == end - start) {
                     return chunk_bytes;
                 }
 
-                if (bit_index >= start) {
-                    for (int bit = 0; bit < this -> bit_depth; bit++) {
-                        switch (this -> image.channels()) {
-                            case 3: {
-                                this -> SetBit(&chunk_bytes.back(), bits_read % 8, this -> GetBit(this -> image.at<cv::Vec3b>(row, col)[cha], bit));
-                                break;
-                            }
-                            case 4: {
-                                this -> SetBit(&chunk_bytes.back(), bits_read % 8, this -> GetBit(this -> image.at<cv::Vec4b>(row, col)[cha], bit));
-                                break;
-                            }
+                for (int bit = 0; bit < this -> bit_depth; bit++) {
+                    switch (this -> image.channels()) {
+                        case 3: {
+                            this -> SetBit(&chunk_bytes.back(), bits_read % 8, this -> GetBit(this -> image.at<cv::Vec3b>(row, col)[cha], bit));
+                            break;
                         }
-
-                        bits_read++;
-
-                        if (bits_read == end - start) {
-                            // We have decoded all of the bytes.
-                            return chunk_bytes;
-                        } else if (bits_read % 8 == 0) {
-                            // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
-                            chunk_bytes.emplace_back(0);
+                        case 4: {
+                            this -> SetBit(&chunk_bytes.back(), bits_read % 8, this -> GetBit(this -> image.at<cv::Vec4b>(row, col)[cha], bit));
+                            break;
                         }
                     }
-                }
 
-                bit_index++;
+                    bits_read++;
+
+                    if (bits_read == end - start) {
+                        // We have decoded all of the bytes.
+                        return chunk_bytes;
+                    } else if (bits_read % 8 == 0) {
+                        // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
+                        chunk_bytes.emplace_back(0);
+                    }
+                }
             }
         }
     }
@@ -218,35 +204,30 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
  */
 unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
     int bits_read = 0;
-    int bit_index = 0;
     unsigned int chunk_length = 0;
 
-    for (int row = 0; row < this -> image.rows; row++) {
-        for (int col = 0; col < this -> image.cols; col++) {
-            for (int cha = 0; cha < this -> image.channels(); cha++) {
+    for (int row = (start / this -> image.channels()) / this -> image.rows; row < this -> image.rows; row++) {
+        for (int col = (start / this -> image.channels() % this -> image.cols); col < this -> image.cols; col++) {
+            for (int cha = (start % this -> image.channels()); cha < this -> image.channels(); cha++) {
                 if (bits_read == 32) {
                     // We only need to encode a 32bit integer, stop once complete.
                     return chunk_length;
                 }
 
-                if (bit_index >= start) {
-                    for (int bit = 0; bit < this -> bit_depth; bit++) {
-                        switch (this -> image.channels()) {
-                            case 3: {
-                                this -> SetBit(&chunk_length, bits_read, this -> GetBit(this -> image.at<cv::Vec3b>(row, col)[cha], bit));
-                                break;
-                            }
-                            case 4: {
-                                this -> SetBit(&chunk_length, bits_read, this -> GetBit(this -> image.at<cv::Vec4b>(row, col)[cha], bit));
-                                break;
-                            }
+                for (int bit = 0; bit < this -> bit_depth; bit++) {
+                    switch (this -> image.channels()) {
+                        case 3: {
+                            this -> SetBit(&chunk_length, bits_read, this -> GetBit(this -> image.at<cv::Vec3b>(row, col)[cha], bit));
+                            break;
                         }
-
-                        bits_read++;
+                        case 4: {
+                            this -> SetBit(&chunk_length, bits_read, this -> GetBit(this -> image.at<cv::Vec4b>(row, col)[cha], bit));
+                            break;
+                        }
                     }
-                }
 
-                bit_index++;
+                    bits_read++;
+                }
             }
         }
     }
