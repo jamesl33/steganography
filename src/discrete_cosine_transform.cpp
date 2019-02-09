@@ -61,7 +61,7 @@ void DiscreteCosineTransform::EncodeChunkLength(const int& start, const unsigned
  * @return The chunk of information read from the carrier image.
  */
 std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int& start, const int& end) {
-
+    return std::vector<unsigned char> {}; // This "should" not be reached
 }
 
 /**
@@ -71,5 +71,5 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int& start
  * @return The length of the next chunk in bytes.
  */
 unsigned int DiscreteCosineTransform::DecodeChunkLength(const int& start) {
-
+    return 0; // This "should" not be reached
 }
