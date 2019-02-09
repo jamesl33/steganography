@@ -14,6 +14,7 @@ include_directories(include)
 
 set(SOURCE_FILES
     src/least_significant_bit.cpp
+    src/discrete_cosine_transform.cpp
     src/steganography.cpp
 )
 

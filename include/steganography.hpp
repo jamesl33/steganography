@@ -50,6 +50,38 @@ class Steganography {
 
         std::vector<unsigned char> ReadPayload(const boost::filesystem::path&);
         void WritePayload(const boost::filesystem::path&, const std::vector<unsigned char>&);
+
+
+        /**
+         * Set the n'th significant bit of a generic type.
+         *
+         * This function is designed to set the n'th significant bit of integer/char types.
+         * It assumes that it is being used correctly; there is no incorrect input detection.
+         *
+         * @param target "Any" type which works with bytewise operators, the target to set the bit of.
+         * @param bit Which bit to set in the target.
+         * @param value The value the target bit will be set too.
+         */
+        template <class T>
+        inline void SetBit(T* target, const int& bit, const int& value) {
+            *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
+        }
+
+        /**
+         * Get the n'th significant bit of a generic type.
+         *
+         * This function is designed to get the n'th significant bit of integer/char types.
+         * It assumes that it is being used correctly; there is no incorrect input detection.
+         *
+         * @param target "Any" type which works with bytewise operators, the target to set the but of.
+         * @param bit Which bit to set in the targer.
+         * @param value The value the target bit will be set too.
+         * @return The n'th significant bit.
+         */
+        template <class T>
+        inline int GetBit(const T& target, const int& bit) {
+            return (target >> bit) & 1UL;
+        }
 };
 
 #endif // STEGANOGRAPHY_HPP

@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include <string>
 #include <optparse.hpp>
 #include "least_significant_bit.hpp"
+#include "discrete_cosine_transform.hpp"
 
 void help(optparse::OptionParser parser, std::string command) {
     if (command == "help") {
@@ -41,9 +42,14 @@ int main(int argc, char **argv) {
                "Use \"%prog help <command>\" for help on a specific command");
 
     parser.add_option("-d", "--depth")
-        .help("encode/decode depth, excepts values between 1 and 8")
+        .help("encode/decode depth, excepts values between '1' and '8'")
         .type("int")
         .set_default(1);
+
+    parser.add_option("-t", "--technique")
+        .help("encode/decode technique, excepts values 'lsb' or 'dct'")
+        .type("string")
+        .set_default("lsb");
 
     const optparse::Values options = parser.parse_args(argc, argv);
     const std::vector<std::string> arguments = parser.args();
@@ -65,18 +71,28 @@ int main(int argc, char **argv) {
             help(parser, "help");
         }
     } else if (arguments[0] == "en" || arguments[0] == "encode") {
-        if (arguments.size() == 3) {
-            LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
-            lsb.Encode(arguments[1]);
-        } else {
+        if (arguments.size() != 3) {
             help(parser, "encode");
         }
+
+        if (std::string(options.get("technique")) == "lsb") {
+            LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
+            lsb.Encode(arguments[1]);
+        } else if (std::string(options.get("technique")) == "dct") {
+            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("depth"));
+            dct.Encode(arguments[1]);
+        }
     } else if (arguments[0] == "de" || arguments[0] == "decode") {
-        if (arguments.size() == 2) {
+        if (arguments.size() != 2) {
+            help(parser, "decode");
+        }
+
+        if (std::string(options.get("technique")) == "lsb") {
             LeastSignificantBit lsb = LeastSignificantBit(arguments[1], options.get("depth"));
             lsb.Decode();
-        } else {
-            help(parser, "decode");
+        } else if (std::string(options.get("technique")) == "dct") {
+            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("depth"));
+            dct.Decode();
         }
     }
 }

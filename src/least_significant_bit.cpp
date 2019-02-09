@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "least_significant_bit.hpp"
 
 /**
- * Encode the payload into the carrier image.
+ * Encode the payload into the carrier image using LSB.
  *
  * @param payload_path The path to the file you are encoding.
  */
@@ -165,7 +165,7 @@ void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int
  * Decode a chunk of information from the carrier image.
  *
  * @param start The pixel index to start decoding at.
- * @param end The pixel index to stop encoding at.
+ * @param end The pixel index to stop decoding at.
  * @return The chunk of information read from the carrier image.
  */
 std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, const int& end) {
@@ -257,34 +257,4 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
     }
 
     return 0; // This "should" not be reached
-}
-
-/**
- * Set the n'th significant bit of a generic type.
- *
- * This function is designed to set the n'th significant bit of integer/char types.
- * It assumes that it is being used correctly; there is no incorrect input detection.
- *
- * @param target "Any" type which works with bytewise operators, the target to set the bit of.
- * @param bit Which bit to set in the target.
- * @param value The value the target bit will be set too.
- */
-template <class T>
-inline void LeastSignificantBit::SetBit(T* target, const int& bit, const int& value) {
-    *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
-}
-
-/**
- * Get the n'th significant bit of a generic type.
- *
- * This function is designed to get the n'th significant bit of integer/char types.
- * It assumes that it is being used correctly; there is no incorrect input detection.
- *
- * @param target "Any" type which works with bytewise operators, the target to set the but of.
- * @param bit Which bit to set in the targer.
- * @param value The value the target bit will be set too.
- */
-template <class T>
-inline int LeastSignificantBit::GetBit(const T& target, const int& bit) {
-    return (target >> bit) & 1UL;
 }

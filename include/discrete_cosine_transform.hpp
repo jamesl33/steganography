@@ -15,13 +15,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include <queue>
 #include "steganography.hpp"
 
-#ifndef LEAST_SIGNIFICANT_BIT_HPP
-#define LEAST_SIGNIFICANT_BIT_HPP
+#ifndef DISCRETE_COSINE_TRANSFORM_HPP
+#define DISCRETE_COSINE_TRANSFORM_HPP
 
-class LeastSignificantBit : public Steganography {
+class DiscreteCosineTransform : public Steganography {
     public:
         using Steganography::Steganography;
 
@@ -37,4 +36,4 @@ class LeastSignificantBit : public Steganography {
         unsigned int DecodeChunkLength(const int&);
 };
 
-#endif // LEAST_SIGNIFICANT_BIT_HPP
+#endif // DISCRETE_COSINE_TRANSFORM_HPP
