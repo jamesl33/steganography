@@ -82,7 +82,7 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
         for (int col = 0; col < this -> image.cols; col++) {
             for (int cha = 0; cha < this -> image.channels(); cha++) {
                 if (row  == 0 && col == 0 && cha == 0) {
-                    row = (start / this -> image.channels()) / this -> image.rows;
+                    row = (start / this -> image.channels()) / this -> image.cols;
                     col = (start / this -> image.channels() % this -> image.cols);
                     cha = (start % this -> image.channels());
                 }
