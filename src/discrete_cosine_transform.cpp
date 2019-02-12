@@ -45,11 +45,142 @@ void DiscreteCosineTransform::Decode() {
 /**
  * Encode a chunk of information into the carrier image.
  *
+ * Encode a chunk of information into the carrier image using DCT. The
+ * information is hidden in the luminance channel of the YCbCr colorspace by
+ * swapping DCT coefficients.
+ *
  * @param start The pixel index to start encoding at.
  * @param chunk The chunk of information that will be encoded into the carrier image.
  */
 void DiscreteCosineTransform::EncodeChunk(const int& start, const std::vector<unsigned char>& chunk) {
+    int bits_written = 0;
+    std::queue<unsigned char> chunk_bytes;
 
+    // Copy the payload into a queue.
+    for (unsigned char byte : chunk) {
+        chunk_bytes.emplace(byte);
+    }
+
+    // Convert the image to the YCrCb color space.
+    cv::Mat image_ycrcb;
+    cv::cvtColor(this -> image, image_ycrcb, cv::COLOR_BGR2YCrCb);
+
+    // Convert the image to floating point.
+    cv::Mat image_ycrcb_fp;
+    image_ycrcb.convertTo(image_ycrcb_fp, CV_32F);
+
+    // Split the image into channels.
+    std::vector<cv::Mat> channels;
+    cv::split(image_ycrcb_fp, channels);
+
+    for (int row = 0; row < image_ycrcb_fp.rows - 8; row += 8) {
+        for (int col = 0; col < image_ycrcb_fp.cols - 8; col += 8) {
+            if (row == 0 && col == 0) {
+                row = start / (image_ycrcb_fp.cols / 8) * 8;
+                col = start % (image_ycrcb_fp.cols / 8) * 8;
+            }
+
+            // Stop once we have embedded the whole message.
+            if (chunk_bytes.empty()) {
+                // Merge the image channels.
+                cv::Mat merged_ycrcb_fp;
+                cv::merge(channels, merged_ycrcb_fp);
+
+                // Convert the image to unsigned char.
+                cv::Mat merged_ycrcb;
+                merged_ycrcb_fp.convertTo(merged_ycrcb, CV_8U);
+
+                // Convert the image to the BGR colorspace.
+                cv::cvtColor(merged_ycrcb, this -> image, cv::COLOR_YCrCb2BGR);
+                return;
+            }
+
+            // The current 8x8 block we are working on.
+            cv::Mat block(channels[0], cv::Rect(col, row, 8, 8));
+
+            // A "working" copy of the block.
+            cv::Mat trans(cv::Size(8, 8), block.type());
+
+            // Centre the coefficients around 0.
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    block.at<float>(x, y) -= 128;
+                }
+            }
+
+            // Perform forward dct.
+            cv::dct(block, trans);
+
+            // Quantize the 8x8 block while rounding the values.
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    trans.at<float>(x, y) = float(int(trans.at<float>(x, y) / (luminance[x][y] / 10)));
+                }
+            }
+
+            int bit = this -> GetBit(chunk_bytes.front(), bits_written % 8);
+
+            // TODO(James Lee) - Swap multiple coefficients.
+            float low = trans.at<float>(2, 0);
+            float high = trans.at<float>(0, 2);
+
+            // Swap the dct coefficients to match the data bit.
+            if (bit) {
+                if (low == high) {
+                    low -= 0.5;
+                    high += 0.5;
+                } else if (low > high) {
+                    std::swap(low, high);
+                }
+            } else {
+                if (low == high) {
+                    low += 0.5;
+                    high -= 0.5;
+                } else if (low < high) {
+                    std::swap(low, high);
+                }
+            }
+
+            // TODO(James Lee) - Expose this option to the user.
+            // Increase the difference between the "important" coefficients.
+            // A larger value will distort the image more, however, it will
+            // make the data more robust.
+            if (low < high) {
+                low -= 5;
+                high += 5;
+            } else {
+                low += 5;
+                high -= 5;
+            }
+
+            trans.at<float>(2, 0) = low;
+            trans.at<float>(0, 2) = high;
+
+            // Dequantize the 8x8 block.
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    trans.at<float>(x, y) *= (luminance[x][y] / 10);
+                }
+            }
+
+            // Perform the inverse dct.
+            cv::idct(trans, block);
+
+            // Centre the coefficients around 128.
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    block.at<float>(x, y) += 128;
+                }
+            }
+
+            bits_written++;
+
+            if (bits_written % 8 == 0) {
+                // We have encoded a full byte now, pop it from the queue.
+                chunk_bytes.pop();
+            }
+        }
+    }
 }
 
 /**
@@ -186,6 +317,62 @@ void DiscreteCosineTransform::EncodeChunkLength(const int& start, const unsigned
  * @return The chunk of information read from the carrier image.
  */
 std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int& start, const int& end) {
+    int bits_read = 0;
+    std::vector<unsigned char> chunk_bytes = {0};
+
+    // Convert the image to the YCrCb color space.
+    cv::Mat image_ycrcb;
+    cv::cvtColor(this -> image, image_ycrcb, cv::COLOR_BGR2YCrCb);
+
+    // Convert the image to floating point.
+    cv::Mat image_ycrcb_fp;
+    image_ycrcb.convertTo(image_ycrcb_fp, CV_32F);
+
+    // Split the image into channels.
+    std::vector<cv::Mat> channels;
+    cv::split(image_ycrcb_fp, channels);
+
+    for (int row = 0; row < image_ycrcb_fp.rows - 8; row += 8) {
+        for (int col = 0; col < image_ycrcb_fp.cols - 8; col += 8) {
+            if (row == 0 && col == 0) {
+                row = start / (image_ycrcb_fp.cols / 8) * 8;
+                col = start % (image_ycrcb_fp.cols / 8) * 8;
+            }
+
+            if (bits_read == end - start) {
+                // We only need to decode a 32bit integer, stop once complete.
+                return chunk_bytes;
+            }
+
+            // The current 8x8 block we are working on.
+            cv::Mat block(channels[0], cv::Rect(col, row, 8, 8));
+
+            // A "working" copy of the block.
+            cv::Mat trans(cv::Size(8, 8), block.type());
+
+            // Perform the forward dct.
+            cv::dct(block, trans);
+
+            // Round the values in the 8x8 block.
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    trans.at<float>(x, y) = float(int(trans.at<float>(x, y)));
+                }
+            }
+
+            // TODO(James Lee) - Read from multiple swapped coefficients.
+            // Decode the data from the swapped coefficients.
+            this -> SetBit(&chunk_bytes.back(), bits_read % 8, (trans.at<float>(0, 2) > trans.at<float>(2, 0)));
+
+            bits_read++;
+
+            if (bits_read % 8 == 0) {
+                // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
+                chunk_bytes.emplace_back(0);
+            }
+        }
+    }
+
     return std::vector<unsigned char> {}; // This "should" not be reached
 }
 
