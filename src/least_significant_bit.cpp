@@ -234,7 +234,7 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
                 }
 
                 if (bits_read == 32) {
-                    // We only need to encode a 32bit integer, stop once complete.
+                    // We only need to decode a 32bit integer, stop once complete.
                     return chunk_length;
                 }
 
