@@ -398,7 +398,7 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int& start
 
             bits_read++;
 
-            if (bits_read % 8 == 0) {
+            if (!(bits_read == end - start) && (bits_read % 8 == 0)) {
                 // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
                 chunk_bytes.emplace_back(0);
             }
