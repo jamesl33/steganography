@@ -32,14 +32,46 @@ const std::vector<std::vector<int>> luminance = {{16, 11, 10, 16, 24, 40, 51, 61
  * @param payload_path The path to the file you are encoding.
  */
 void DiscreteCosineTransform::Encode(const boost::filesystem::path& payload_path) {
+    // Convert the payload filename to byte vector.
+    std::string payload_filename = payload_path.filename().string();
+    std::vector<unsigned char> payload_filename_bytes(payload_filename.begin(), payload_filename.end());
 
+    // Encode the length/content of the filename in the carrier image.
+    this -> EncodeChunkLength(0, payload_filename_bytes.size());
+    this -> EncodeChunk(32, payload_filename_bytes);
+
+    // Read the payload into a byte vector.
+    std::vector<unsigned char> payload_bytes = this -> ReadPayload(payload_path);
+
+    // Encode the length/content of the payload in the carrier image.
+    this -> EncodeChunkLength(32 + payload_filename_bytes.size() * 8, payload_bytes.size());
+    this -> EncodeChunk(64 + payload_filename_bytes.size() * 8, payload_bytes);
+
+    // Save the modified image with the "steg-" prefix.
+    boost::filesystem::path steg_image_filename = this -> image_path.filename();
+    steg_image_filename.replace_extension(".jpg");
+
+    // TODO(James Lee) - Expose JPEG quality to the user.
+    cv::imwrite("steg-" + steg_image_filename.string(), this -> image, std::vector<int>{CV_IMWRITE_JPEG_QUALITY, 100});
 }
 
 /**
  * Decode the payload from the carrier image.
  */
 void DiscreteCosineTransform::Decode() {
+    // Decode the filename byte vector from the carrier image.
+    unsigned int payload_filename_length = this -> DecodeChunkLength(0);
+    std::vector<unsigned char> payload_filename_bytes = this -> DecodeChunk(32, 32 + payload_filename_length * 8);
 
+    // Convert the payload filename to a string.
+    std::string payload_filename(payload_filename_bytes.begin(), payload_filename_bytes.end());
+
+    // Decode the payload byte vector from the carrier image.
+    unsigned int payload_length = this -> DecodeChunkLength(32 + payload_filename_length * 8);
+    std::vector<unsigned char> payload_bytes = this -> DecodeChunk(64 + payload_filename_length * 8, 64 + payload_filename_length * 8 + payload_length * 8);
+
+    // Save the payload to it's filename with the "steg-" prefix.
+    this -> WritePayload("steg-" + payload_filename, payload_bytes);
 }
 
 /**
