@@ -41,6 +41,8 @@ void LeastSignificantBit::Encode(const boost::filesystem::path& payload_path) {
     // Save the modified image with the "steg-" prefix.
     boost::filesystem::path steg_image_filename = this -> image_path.filename();
     steg_image_filename.replace_extension(".png");
+
+    // TODO(James Lee) - Expose png compression to the user.
     cv::imwrite("steg-" + steg_image_filename.string(), this -> image, std::vector<int>{CV_IMWRITE_PNG_COMPRESSION, 9});
 }
 
@@ -105,10 +107,7 @@ void LeastSignificantBit::EncodeChunk(const int& start, const std::vector<unsign
 
                     bits_written++;
 
-                    if (chunk_bytes.empty()) {
-                        // There is nothing left to encode.
-                        return;
-                    } else if (bits_written % 8 == 0) {
+                    if (bits_written % 8 == 0) {
                         // We have encoded a full byte now, pop it from the queue.
                         chunk_bytes.pop();
                     }
@@ -199,10 +198,7 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
 
                     bits_read++;
 
-                    if (bits_read == end - start) {
-                        // We have decoded all of the bytes.
-                        return chunk_bytes;
-                    } else if (bits_read % 8 == 0) {
+                    if (bits_read % 8 == 0) {
                         // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
                         chunk_bytes.emplace_back(0);
                     }
