@@ -131,7 +131,7 @@ void LeastSignificantBit::EncodeChunkLength(const int& start, const unsigned int
         for (int col = 0; col < this -> image.cols; col++) {
             for (int cha = 0; cha < this -> image.channels(); cha++) {
                 if (row  == 0 && col == 0 && cha == 0) {
-                    row = (start / this -> image.channels()) / this -> image.rows;
+                    row = (start / this -> image.channels()) / this -> image.cols;
                     col = (start / this -> image.channels() % this -> image.cols);
                     cha = (start % this -> image.channels());
                 }
@@ -175,7 +175,7 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int& start, co
         for (int col = 0; col < this -> image.cols; col++) {
             for (int cha = 0; cha < this -> image.channels(); cha++) {
                 if (row  == 0 && col == 0 && cha == 0) {
-                    row = (start / this -> image.channels()) / this -> image.rows;
+                    row = (start / this -> image.channels()) / this -> image.cols;
                     col = (start / this -> image.channels() % this -> image.cols);
                     cha = (start % this -> image.channels());
                 }
@@ -224,7 +224,7 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int& start) {
         for (int col = 0; col < this -> image.cols; col++) {
             for (int cha = 0; cha < this -> image.channels(); cha++) {
                 if (row  == 0 && col == 0 && cha == 0) {
-                    row = (start / this -> image.channels()) / this -> image.rows;
+                    row = (start / this -> image.channels()) / this -> image.cols;
                     col = (start / this -> image.channels() % this -> image.cols);
                     cha = (start % this -> image.channels());
                 }
