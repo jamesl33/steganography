@@ -104,8 +104,8 @@ void DiscreteCosineTransform::EncodeChunk(const int& start, const std::vector<un
     for (int row = 0; row < imagefp.rows - 8; row += 8) {
         for (int col = 0; col < imagefp.cols - 8; col += 8) {
             if (row == 0 && col == 0) {
-                row = start / (imagefp.cols / 8) * 8;
-                col = start % (imagefp.cols / 8) * 8;
+                row = start / ((imagefp.cols - 8) / 8) * 8;
+                col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
             // Stop once we have embedded the whole message.
@@ -212,8 +212,8 @@ void DiscreteCosineTransform::EncodeChunkLength(const int& start, const unsigned
     for (int row = 0; row < imagefp.rows - 8; row += 8) {
         for (int col = 0; col < imagefp.cols - 8; col += 8) {
             if (row == 0 && col == 0) {
-                row = start / (imagefp.cols / 8) * 8;
-                col = start % (imagefp.cols / 8) * 8;
+                row = start / ((imagefp.cols - 8) / 8) * 8;
+                col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
             // We only need to encode a 32bit integer, stop once complete.
@@ -318,8 +318,8 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int& start
     for (int row = 0; row < imagefp.rows - 8; row += 8) {
         for (int col = 0; col < imagefp.cols - 8; col += 8) {
             if (row == 0 && col == 0) {
-                row = start / (imagefp.cols / 8) * 8;
-                col = start % (imagefp.cols / 8) * 8;
+                row = start / ((imagefp.cols - 8) / 8) * 8;
+                col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
             if (bits_read == end - start) {
@@ -373,8 +373,8 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int& start) {
     for (int row = 0; row < imagefp.rows - 8; row += 8) {
         for (int col = 0; col < imagefp.cols - 8; col += 8) {
             if (row == 0 && col == 0) {
-                row = start / (imagefp.cols / 8) * 8;
-                col = start % (imagefp.cols / 8) * 8;
+                row = start / ((imagefp.cols - 8) / 8) * 8;
+                col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
             if (bits_read == 32) {
