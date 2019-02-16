@@ -24,12 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 class DiscreteCosineTransform : public Steganography {
     public:
-        using Steganography::Steganography;
+        explicit DiscreteCosineTransform(const boost::filesystem::path& image_path, int persistence) : Steganography(image_path) {
+            this -> persistence = persistence;
+        }
 
         void Encode(const boost::filesystem::path&);
         void Decode();
     private:
-        int data_bit;
+        int persistence;
 
         void EncodeChunk(const int&, const std::vector<unsigned char>&);
         void EncodeChunkLength(const int&, const unsigned int&);

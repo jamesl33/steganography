@@ -46,10 +46,15 @@ int main(int argc, char **argv) {
         .type("int")
         .set_default(1);
 
+    parser.add_option("-p", "--persistence")
+        .help("dct encode persistence, higher values ensure the hidden data persists but causes more distortion")
+        .type("int")
+        .set_default(10);
+
     parser.add_option("-t", "--technique")
         .help("encode/decode technique, excepts values 'lsb' or 'dct'")
         .type("string")
-        .set_default("lsb");
+        .set_default("dct");
 
     const optparse::Values options = parser.parse_args(argc, argv);
     const std::vector<std::string> arguments = parser.args();
@@ -79,7 +84,7 @@ int main(int argc, char **argv) {
             LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
             lsb.Encode(arguments[1]);
         } else if (std::string(options.get("technique")) == "dct") {
-            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("depth"));
+            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("persistence"));
             dct.Encode(arguments[1]);
         }
     } else if (arguments[0] == "de" || arguments[0] == "decode") {
@@ -91,7 +96,7 @@ int main(int argc, char **argv) {
             LeastSignificantBit lsb = LeastSignificantBit(arguments[1], options.get("depth"));
             lsb.Decode();
         } else if (std::string(options.get("technique")) == "dct") {
-            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("depth"));
+            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("persistence"));
             dct.Decode();
         }
     }

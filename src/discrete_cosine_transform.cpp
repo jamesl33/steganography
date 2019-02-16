@@ -155,11 +155,11 @@ void DiscreteCosineTransform::EncodeChunk(const int& start, const std::vector<un
             }
 
             if (bit && (low == high || low < high)) {
-                low -= 15;
-                high += 15;
+                low -= this -> persistence;;
+                high += this -> persistence;;
             } else if (!bit && (low == high || low > high)) {
-                low += 15;
-                high -= 15;
+                low += this -> persistence;;
+                high -= this -> persistence;;
             }
 
             trans.at<float>(0, 2) = low;
@@ -264,11 +264,11 @@ void DiscreteCosineTransform::EncodeChunkLength(const int& start, const unsigned
             }
 
             if (bit && (low == high || low < high)) {
-                low -= 15;
-                high += 15;
+                low -= this -> persistence;;
+                high += this -> persistence;;
             } else if (!bit && (low == high || low > high)) {
-                low += 15;
-                high -= 15;
+                low += this -> persistence;;
+                high -= this -> persistence;;
             }
 
             trans.at<float>(0, 2) = low;
