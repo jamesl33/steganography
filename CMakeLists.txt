@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-option(WITH_TESTS "Compile the unit testing" OFF)
-
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 file(DOWNLOAD https://raw.githubusercontent.com/myint/optparse/v1.0/optparse.h include/optparse.hpp)
@@ -18,23 +16,15 @@ set(SOURCE_FILES
     src/steganography.cpp
 )
 
-if (WITH_TESTS)
-    set(TEST_FILES
-        # TODO - Add some unit testing
-    )
-endif()
+set(TEST_FILES
+    # TODO - Add some unit testing
+)
 
 add_executable(steganography src/main.cpp ${SOURCE_FILES})
-
-if (WITH_TESTS)
-    add_executable(steganography-testing test/main.cpp ${SOURCE_FILES} ${TEST_FILES})
-endif()
+add_executable(steganography-testing test/main.cpp ${SOURCE_FILES} ${TEST_FILES})
 
 find_package(Boost REQUIRED filesystem)
 find_package(OpenCV REQUIRED)
 
 target_link_libraries(steganography ${Boost_LIBRARIES} ${OpenCV_LIBS})
-
-if (WITH_TESTS)
-    target_link_libraries(steganography-testing ${Boost_LIBRARIES} ${OpenCV_LIBS})
-endif()
+target_link_libraries(steganography-testing ${Boost_LIBRARIES} ${OpenCV_LIBS})
