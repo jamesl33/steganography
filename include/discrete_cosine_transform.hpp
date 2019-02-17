@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <queue>
+#include <tuple>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "steganography.hpp"
 
@@ -41,6 +42,8 @@ class DiscreteCosineTransform : public Steganography
 
     std::vector<unsigned char> DecodeChunk(const int &, const int &);
     unsigned int DecodeChunkLength(const int &);
+
+    void SwapCoefficients(cv::Mat *, const int &);
 };
 
 #endif // DISCRETE_COSINE_TRANSFORM_HPP

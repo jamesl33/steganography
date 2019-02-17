@@ -153,35 +153,7 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
                 }
             }
 
-            int bit = this->GetBit(chunk_bytes.front(), bits_written % 8);
-
-            // TODO(James Lee) - Swap multiple coefficients.
-            float low = trans.at<float>(0, 2);
-            float high = trans.at<float>(2, 0);
-
-            // Swap the dct coefficients to match the data bit.
-            if (bit && (low > high))
-            {
-                std::swap(low, high);
-            }
-            else if (!bit && (low < high))
-            {
-                std::swap(low, high);
-            }
-
-            if (bit && (low == high || low < high))
-            {
-                low -= this->persistence;
-                high += this->persistence;
-            }
-            else if (!bit && (low == high || low > high))
-            {
-                low += this->persistence;
-                high -= this->persistence;
-            }
-
-            trans.at<float>(0, 2) = low;
-            trans.at<float>(2, 0) = high;
+            this->SwapCoefficients(&trans, this->GetBit(chunk_bytes.front(), bits_written % 8));
 
             // Dequantize the 8x8 block.
             for (int x = 0; x < 8; x++)
@@ -282,35 +254,7 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
                 }
             }
 
-            int bit = this->GetBit(chunk_length, bits_written);
-
-            // TODO(James Lee) - Swap multiple coefficients.
-            float low = trans.at<float>(0, 2);
-            float high = trans.at<float>(2, 0);
-
-            // Swap the dct coefficients to match the data bit.
-            if (bit && (low > high))
-            {
-                std::swap(low, high);
-            }
-            else if (!bit && (low < high))
-            {
-                std::swap(low, high);
-            }
-
-            if (bit && (low == high || low < high))
-            {
-                low -= this->persistence;
-                high += this->persistence;
-            }
-            else if (!bit && (low == high || low > high))
-            {
-                low += this->persistence;
-                high -= this->persistence;
-            }
-
-            trans.at<float>(0, 2) = low;
-            trans.at<float>(2, 0) = high;
+            this->SwapCoefficients(&trans, this->GetBit(chunk_length, bits_written));
 
             // Dequantize the 8x8 block.
             for (int x = 0; x < 8; x++)
@@ -453,4 +397,34 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
     }
 
     return 0; // This "should" not be reached
+}
+
+void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value)
+{
+    float low = block->at<float>(0, 2);
+    float high = block->at<float>(2, 0);
+
+    // Swap the dct coefficients to match the value bit.
+    if (value && (low > high))
+    {
+        std::swap(low, high);
+    }
+    else if (!value && (low < high))
+    {
+        std::swap(low, high);
+    }
+
+    if (value && (low == high || low < high))
+    {
+        low -= this->persistence;
+        high += this->persistence;
+    }
+    else if (!value && (low == high || low > high))
+    {
+        low += this->persistence;
+        high -= this->persistence;
+    }
+
+    block->at<float>(0, 2) = low;
+    block->at<float>(2, 0) = high;
 }
