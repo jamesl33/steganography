@@ -20,26 +20,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "least_significant_bit.hpp"
 #include "discrete_cosine_transform.hpp"
 
-void help(optparse::OptionParser parser, std::string command) {
-    if (command == "help") {
+void help(optparse::OptionParser parser, std::string command)
+{
+    if (command == "help")
+    {
         std::cout << parser.format_help() << std::endl;
     }
-    else if (command == "en" || command == "encode") {
+    else if (command == "en" || command == "encode")
+    {
         std::cout << "Usage: encode [options] image payload" << std::endl;
-        std::cout << std::endl << "Options:" << std::endl << parser.format_option_help();
-    } else if (command == "de" || command == "decode") {
+        std::cout << std::endl
+                  << "Options:" << std::endl
+                  << parser.format_option_help();
+    }
+    else if (command == "de" || command == "decode")
+    {
         std::cout << "Usage: decode [options] image" << std::endl;
-        std::cout << std::endl << "Options:" << std::endl << parser.format_option_help();
+        std::cout << std::endl
+                  << "Options:" << std::endl
+                  << parser.format_option_help();
     }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     optparse::OptionParser parser = optparse::OptionParser()
-        .usage("%prog [options] <command> [arguments]\n\n"
-               "where <command> is one of:\n\n"
-               "\tencode (en) - Encode a file into a carrier image\n"
-               "\tdecode (de) - Decode a file from a carrier image\n\n"
-               "Use \"%prog help <command>\" for help on a specific command");
+                                        .usage("%prog [options] <command> [arguments]\n\n"
+                                               "where <command> is one of:\n\n"
+                                               "\tencode (en) - Encode a file into a carrier image\n"
+                                               "\tdecode (de) - Decode a file from a carrier image\n\n"
+                                               "Use \"%prog help <command>\" for help on a specific command");
 
     parser.add_option("-d", "--depth")
         .help("encode/decode depth, excepts values between '1' and '8'")
@@ -59,43 +69,61 @@ int main(int argc, char **argv) {
     const optparse::Values options = parser.parse_args(argc, argv);
     const std::vector<std::string> arguments = parser.args();
 
-    if (arguments.size() == 0) {
+    if (arguments.size() == 0)
+    {
         std::cout << parser.format_help();
         exit(0);
     }
 
-    if (int(options.get("depth")) < 1 || int(options.get("depth")) > 8) {
+    if (int(options.get("depth")) < 1 || int(options.get("depth")) > 8)
+    {
         std::cerr << "Error: Invalid depth value" << std::endl;
         exit(1);
     }
 
-    if (arguments[0] == "help") {
-        if (arguments.size() == 2) {
+    if (arguments[0] == "help")
+    {
+        if (arguments.size() == 2)
+        {
             help(parser, arguments[1]);
-        } else {
+        }
+        else
+        {
             help(parser, "help");
         }
-    } else if (arguments[0] == "en" || arguments[0] == "encode") {
-        if (arguments.size() != 3) {
+    }
+    else if (arguments[0] == "en" || arguments[0] == "encode")
+    {
+        if (arguments.size() != 3)
+        {
             help(parser, "encode");
         }
 
-        if (std::string(options.get("technique")) == "lsb") {
+        if (std::string(options.get("technique")) == "lsb")
+        {
             LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
             lsb.Encode(arguments[1]);
-        } else if (std::string(options.get("technique")) == "dct") {
+        }
+        else if (std::string(options.get("technique")) == "dct")
+        {
             DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("persistence"));
             dct.Encode(arguments[1]);
         }
-    } else if (arguments[0] == "de" || arguments[0] == "decode") {
-        if (arguments.size() != 2) {
+    }
+    else if (arguments[0] == "de" || arguments[0] == "decode")
+    {
+        if (arguments.size() != 2)
+        {
             help(parser, "decode");
         }
 
-        if (std::string(options.get("technique")) == "lsb") {
+        if (std::string(options.get("technique")) == "lsb")
+        {
             LeastSignificantBit lsb = LeastSignificantBit(arguments[1], options.get("depth"));
             lsb.Decode();
-        } else if (std::string(options.get("technique")) == "dct") {
+        }
+        else if (std::string(options.get("technique")) == "dct")
+        {
             DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("persistence"));
             dct.Decode();
         }

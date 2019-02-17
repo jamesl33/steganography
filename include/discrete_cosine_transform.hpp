@@ -22,22 +22,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #ifndef DISCRETE_COSINE_TRANSFORM_HPP
 #define DISCRETE_COSINE_TRANSFORM_HPP
 
-class DiscreteCosineTransform : public Steganography {
-    public:
-        explicit DiscreteCosineTransform(const boost::filesystem::path& image_path, int persistence) : Steganography(image_path) {
-            this -> persistence = persistence;
-        }
+class DiscreteCosineTransform : public Steganography
+{
+  public:
+    explicit DiscreteCosineTransform(const boost::filesystem::path &image_path, int persistence) : Steganography(image_path)
+    {
+        this->persistence = persistence;
+    }
 
-        void Encode(const boost::filesystem::path&);
-        void Decode();
-    private:
-        int persistence;
+    void Encode(const boost::filesystem::path &);
+    void Decode();
 
-        void EncodeChunk(const int&, const std::vector<unsigned char>&);
-        void EncodeChunkLength(const int&, const unsigned int&);
+  private:
+    int persistence;
 
-        std::vector<unsigned char> DecodeChunk(const int&, const int&);
-        unsigned int DecodeChunkLength(const int&);
+    void EncodeChunk(const int &, const std::vector<unsigned char> &);
+    void EncodeChunkLength(const int &, const unsigned int &);
+
+    std::vector<unsigned char> DecodeChunk(const int &, const int &);
+    unsigned int DecodeChunkLength(const int &);
 };
 
 #endif // DISCRETE_COSINE_TRANSFORM_HPP

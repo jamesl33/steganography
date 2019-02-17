@@ -21,22 +21,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #ifndef LEAST_SIGNIFICANT_BIT_HPP
 #define LEAST_SIGNIFICANT_BIT_HPP
 
-class LeastSignificantBit : public Steganography {
-    public:
-        LeastSignificantBit(const boost::filesystem::path& image_path, int bit_depth) : Steganography(image_path) {
-            this -> bit_depth = bit_depth;
-        }
+class LeastSignificantBit : public Steganography
+{
+  public:
+    LeastSignificantBit(const boost::filesystem::path &image_path, int bit_depth) : Steganography(image_path)
+    {
+        this->bit_depth = bit_depth;
+    }
 
-        void Encode(const boost::filesystem::path&);
-        void Decode();
-    private:
-        int bit_depth;
+    void Encode(const boost::filesystem::path &);
+    void Decode();
 
-        void EncodeChunk(const int&, const std::vector<unsigned char>&);
-        void EncodeChunkLength(const int&, const unsigned int&);
+  private:
+    int bit_depth;
 
-        std::vector<unsigned char> DecodeChunk(const int&, const int&);
-        unsigned int DecodeChunkLength(const int&);
+    void EncodeChunk(const int &, const std::vector<unsigned char> &);
+    void EncodeChunkLength(const int &, const unsigned int &);
+
+    std::vector<unsigned char> DecodeChunk(const int &, const int &);
+    unsigned int DecodeChunkLength(const int &);
 };
 
 #endif // LEAST_SIGNIFICANT_BIT_HPP

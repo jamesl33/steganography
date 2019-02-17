@@ -23,16 +23,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  * @param payload_path The path to the file to read as the payload.
  * @return A vector containing all the bytes from the payload file.
  */
-std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::path& payload_path) {
+std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::path &payload_path)
+{
     char byte;
     std::ifstream file(payload_path.string(), std::ios::binary);
     std::vector<unsigned char> payload;
 
-    if (file.good()) {
-        while (file.get(byte)) {
+    if (file.good())
+    {
+        while (file.get(byte))
+        {
             payload.emplace_back(byte);
         }
-    } else {
+    }
+    else
+    {
         std::cerr << "Error: Failed to open input payload file" << std::endl;
     }
 
@@ -46,14 +51,19 @@ std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::p
  * @param payload_path The path to the file that will be created.
  * @param payload The payload decoded from the carrier image.
  */
-void Steganography::WritePayload(const boost::filesystem::path& payload_path, const std::vector<unsigned char>& payload) {
+void Steganography::WritePayload(const boost::filesystem::path &payload_path, const std::vector<unsigned char> &payload)
+{
     std::ofstream file(payload_path.string(), std::ios::binary);
 
-    if (file.good()) {
-        for (unsigned char byte : payload) {
+    if (file.good())
+    {
+        for (unsigned char byte : payload)
+        {
             file.put(byte);
         }
-    } else {
+    }
+    else
+    {
         std::cerr << "Error: Failed to open output payload file" << std::endl;
     }
 

@@ -28,29 +28,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 /**
  * Abstract base class which each steganography technique will extend.
  */
-class Steganography {
-    public:
-        explicit Steganography(const boost::filesystem::path& image_path) {
-            this -> image_path = image_path;
-            this -> image = cv::imread(image_path.string(), cv::IMREAD_UNCHANGED);
+class Steganography
+{
+  public:
+    explicit Steganography(const boost::filesystem::path &image_path)
+    {
+        this->image_path = image_path;
+        this->image = cv::imread(image_path.string(), cv::IMREAD_UNCHANGED);
 
-            if (!this -> image.data) {
-                std::cerr << "Error: Failed to open input image" << std::endl;
-                exit(1);
-            }
+        if (!this->image.data)
+        {
+            std::cerr << "Error: Failed to open input image" << std::endl;
+            exit(1);
         }
+    }
 
-        virtual void Encode(const boost::filesystem::path&) = 0;
-        virtual void Decode() = 0;
-    protected:
-        boost::filesystem::path image_path;
-        cv::Mat image;
+    virtual void Encode(const boost::filesystem::path &) = 0;
+    virtual void Decode() = 0;
 
-        std::vector<unsigned char> ReadPayload(const boost::filesystem::path&);
-        void WritePayload(const boost::filesystem::path&, const std::vector<unsigned char>&);
+  protected:
+    boost::filesystem::path image_path;
+    cv::Mat image;
 
+    std::vector<unsigned char> ReadPayload(const boost::filesystem::path &);
+    void WritePayload(const boost::filesystem::path &, const std::vector<unsigned char> &);
 
-        /**
+    /**
          * Set the n'th significant bit of a generic type.
          *
          * This function is designed to set the n'th significant bit of integer/char types.
@@ -60,12 +63,13 @@ class Steganography {
          * @param bit Which bit to set in the target.
          * @param value The value the target bit will be set too.
          */
-        template <class T>
-        inline void SetBit(T* target, const int& bit, const int& value) {
-            *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
-        }
+    template <class T>
+    inline void SetBit(T *target, const int &bit, const int &value)
+    {
+        *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
+    }
 
-        /**
+    /**
          * Get the n'th significant bit of a generic type.
          *
          * This function is designed to get the n'th significant bit of integer/char types.
@@ -76,10 +80,11 @@ class Steganography {
          * @param value The value the target bit will be set too.
          * @return The n'th significant bit.
          */
-        template <class T>
-        inline int GetBit(const T& target, const int& bit) {
-            return (target >> bit) & 1UL;
-        }
+    template <class T>
+    inline int GetBit(const T &target, const int &bit)
+    {
+        return (target >> bit) & 1UL;
+    }
 };
 
 #endif // STEGANOGRAPHY_HPP
