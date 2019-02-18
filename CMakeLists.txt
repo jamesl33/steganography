@@ -3,10 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 file(DOWNLOAD https://raw.githubusercontent.com/myint/optparse/v1.0/optparse.h include/optparse.hpp)
-
-if (WITH_TESTS)
-    file(DOWNLOAD https://raw.githubusercontent.com/catchorg/Catch2/v2.6.0/single_include/catch2/catch.hpp include/catch.hpp)
-endif()
+file(DOWNLOAD https://raw.githubusercontent.com/catchorg/Catch2/v2.6.0/single_include/catch2/catch.hpp include/catch.hpp)
 
 include_directories(include)
 
