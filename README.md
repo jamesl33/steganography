@@ -1,9 +1,68 @@
 Steganography
 -------------
+Steganography is a C++ steganography tool which leverages the LSB and DCT
+embedding techniques.
+
+Dependencies
+------------
+- [OpenCV](https://opencv.org/)
+- [Boost C++ Libraries](https://www.boost.org/)
+
+Building
+--------
+The steganography executable is build using the CMake build system and requires
+all of the libraries listed above in the [dependencies](#Dependencies) section.
+
+```sh
+# Configure the build
+cmake -B build
+
+# Build steganography with the release optimisations
+cmake --build build --config Release --target steganography
+
+# Run the executable
+./bin/steganography
+```
+
+Testing
+-------
+Unit testing is provided to determine if the application is working correctly,
+the testing uses [Catch2](https://github.com/catchorg/Catch2) and can be run by
+building and running the steganography-testing executable.
+
+```sh
+# Configure the build
+cmake -B build
+
+# Build steganography-testing with the release optimisations
+cmake --build build --config Release --target steganography-testing
+
+# Run the unit testing
+./bin/steganography-testing
+```
+
+Usage
+-----
+A command line user interface is provided to allow the encoding/decoding of
+data using either the least significant bit (LSB) or discrete cosine transform
+(DCT) technique.
+
+```sh
+# Encode using the DCT technique
+steganography encode --technique dct payload carrier
+
+# Decode using the DCT technique
+steganography decode --technique dct carrier
+
+# Encode using the LSB technique
+steganography encode --technique lsb payload carrier
+
+# Decode using the LSB technique
+steganography decode --technique lsb carrier
+```
 
 License
 -------
-
 Copyright (C) 2019 James Lee <jamesl33info@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
