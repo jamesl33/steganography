@@ -11,7 +11,7 @@ Dependencies
 Building
 --------
 The steganography executable is build using the CMake build system and requires
-all of the libraries listed above in the [dependencies](#Dependencies) section.
+all of the libraries listed above in the dependencies section.
 
 ```sh
 # Configure the build
