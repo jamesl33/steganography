@@ -61,6 +61,12 @@ steganography encode --technique lsb payload carrier
 steganography decode --technique lsb carrier
 ```
 
+Documentation
+-------------
+Full documentation generated using [Doxygen](http://www.doxygen.nl/) is
+available through GitHub
+[Pages](https://github.coventry.ac.uk/pages/leej64/steganography/).
+
 License
 -------
 Copyright (C) 2019 James Lee <jamesl33info@gmail.com>
