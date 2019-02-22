@@ -17,6 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "discrete_cosine_transform.hpp"
 
+/**
+ * The default JPEG luminance quantisation table with all it's values divided
+ * by 10.
+ */
 const int quant[8][8] = {{1, 1, 1, 1, 2, 4, 5, 6},
                          {1, 1, 1, 1, 2, 5, 6, 5},
                          {1, 1, 1, 2, 4, 5, 6, 5},
@@ -78,10 +82,6 @@ void DiscreteCosineTransform::Decode()
 
 /**
  * Encode a chunk of information into the carrier image.
- *
- * Encode a chunk of information into the carrier image using DCT. The
- * information is hidden in the luminance channel of the YCbCr colorspace by
- * swapping DCT coefficients.
  *
  * @param start The pixel index to start encoding at.
  * @param chunk The chunk of information that will be encoded into the carrier image.
@@ -399,6 +399,15 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
     return 0; // This "should" not be reached
 }
 
+/**
+ * Swap two DCT coefficients.
+ *
+ * Swap two DCT coefficients and apply a persistence value to ensure that the
+ * data survives the compression process.
+ *
+ * @param block Pointer to the 8x8 block we are currently operating on.
+ * @param value The value which is being stored, should be 0 or 1.
+ */
 void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value)
 {
     float low = block->at<float>(0, 2);

@@ -26,6 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 class DiscreteCosineTransform : public Steganography
 {
   public:
+    /**
+     * Default constructor for the DiscreteCosineTransform class which overrides
+     * the default constructor from the Steganography class.
+     * @param image_path The path to the input carrier image.
+     * @param persistence The persistence value for this instance.
+     */
     explicit DiscreteCosineTransform(const boost::filesystem::path &image_path, int persistence) : Steganography(image_path)
     {
         this->persistence = persistence;
@@ -35,6 +41,12 @@ class DiscreteCosineTransform : public Steganography
     void Decode();
 
   private:
+    /**
+     * @property persistence
+     * Value which will be applied during the DCT coefficient swapping. Higher
+     * values ensure that the data persists, however, cause more visual
+     * degradation.
+     */
     int persistence;
 
     void EncodeChunk(const int &, const std::vector<unsigned char> &);

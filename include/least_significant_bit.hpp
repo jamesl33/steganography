@@ -24,6 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 class LeastSignificantBit : public Steganography
 {
   public:
+    /**
+     * Default constructor for LeastSignificantBit class overrides the default
+     * constructor for the Steganography class.
+     * @param image_path The path to the input carrier image.
+     * @param bit_depth The amount of significant bits to set during the embedding process.
+     */
     LeastSignificantBit(const boost::filesystem::path &image_path, int bit_depth) : Steganography(image_path)
     {
         this->bit_depth = bit_depth;
@@ -33,6 +39,10 @@ class LeastSignificantBit : public Steganography
     void Decode();
 
   private:
+    /**
+     * @property bit_depth
+     * The amount of least significant bits to set during the embedding process.
+     */
     int bit_depth;
 
     void EncodeChunk(const int &, const std::vector<unsigned char> &);

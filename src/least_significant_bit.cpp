@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "least_significant_bit.hpp"
 
 /**
- * Encode the payload into the carrier image using LSB.
+ * Encode the payload into the carrier image by embedding into one or more least
+ * significant bits.
  *
  * @param payload_path The path to the file you are encoding.
  */
@@ -48,7 +49,8 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
 }
 
 /**
- * Decode the payload from the carrier image.
+ * Decode the payload from the carrier image by reading from one or more least
+ * significant bits.
  */
 void LeastSignificantBit::Decode()
 {
@@ -69,6 +71,9 @@ void LeastSignificantBit::Decode()
 
 /**
  * Encode a chunk of information into the carrier image.
+ *
+ * Before encoding a chunk of information you should first encode it's length
+ * using EncodeChunkLength function.
  *
  * @param start The pixel index to start encoding at.
  * @param chunk The chunk of information that will be encoded into the carrier image.
@@ -104,6 +109,7 @@ void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsign
 
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
+                    // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
                     case 3:
@@ -162,6 +168,7 @@ void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int
 
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
+                    // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
                     case 3:
@@ -215,6 +222,7 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
 
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
+                    // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
                     case 3:
@@ -276,6 +284,7 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
 
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
+                    // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
                     case 3:
