@@ -55,7 +55,7 @@ class DiscreteCosineTransform : public Steganography
     std::vector<unsigned char> DecodeChunk(const int &, const int &);
     unsigned int DecodeChunkLength(const int &);
 
-    void SwapCoefficients(cv::Mat *, const int &);
+    void SwapCoefficients(cv::Mat *, const int &, const std::tuple<int, int> &, const std::tuple<int, int> &);
 };
 
 #endif // DISCRETE_COSINE_TRANSFORM_HPP

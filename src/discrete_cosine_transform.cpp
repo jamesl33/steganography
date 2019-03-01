@@ -30,6 +30,11 @@ const int quant[8][8] = {{1, 1, 1, 1, 2, 4, 5, 6},
                          {4, 6, 7, 8, 10, 12, 12, 10},
                          {7, 9, 9, 9, 11, 10, 10, 9}};
 
+const std::vector<std::tuple<std::tuple<int, int>, std::tuple<int, int>>> coefficients = {{{0, 2}, {2, 0}},
+                                                                                          {{1, 2}, {2, 1}},
+                                                                                          {{0, 3}, {3, 0}},
+                                                                                          {{1, 3}, {3, 1}}};
+
 /**
  * Encode the payload into the carrier image using DCT coefficient swapping.
  *
@@ -115,17 +120,6 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
                 col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
-            // Stop once we have embedded the whole message.
-            if (chunk_bytes.empty())
-            {
-                // Merge the image channels.
-                cv::Mat mergedfp;
-                cv::merge(channels, mergedfp);
-
-                mergedfp.convertTo(this->image, CV_8U);
-                return;
-            }
-
             // The current 8x8 block we are working on.
             cv::Mat block(channels[0], cv::Rect(col, row, 8, 8));
 
@@ -153,7 +147,25 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
                 }
             }
 
-            this->SwapCoefficients(&trans, this->GetBit(chunk_bytes.front(), bits_written % 8));
+            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
+            {
+                this->SwapCoefficients(&trans,
+                        this->GetBit(chunk_bytes.front(), bits_written % 8),
+                        std::get<0>(swap_coefficients),
+                        std::get<1>(swap_coefficients));
+
+                bits_written++;
+
+                if (bits_written % 8 == 0)
+                {
+                    // we have encoded a full byte now, pop it from the queue.
+                    chunk_bytes.pop();
+                }
+                else if (chunk_bytes.empty())
+                {
+                    break;
+                }
+            }
 
             // Dequantize the 8x8 block.
             for (int x = 0; x < 8; x++)
@@ -176,12 +188,15 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
                 }
             }
 
-            bits_written++;
-
-            if (bits_written % 8 == 0)
+            // Stop once we have embedded the whole message.
+            if (chunk_bytes.empty())
             {
-                // We have encoded a full byte now, pop it from the queue.
-                chunk_bytes.pop();
+                // Merge the image channels.
+                cv::Mat mergedfp;
+                cv::merge(channels, mergedfp);
+
+                mergedfp.convertTo(this->image, CV_8U);
+                return;
             }
         }
     }
@@ -215,18 +230,6 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
                 col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
-            // We only need to encode a 32bit integer, stop once complete.
-            if (bits_written == 32)
-            {
-                // Merge the image channels.
-                cv::Mat mergedfp;
-                cv::merge(channels, mergedfp);
-
-                // Convert the image to unsigned char.
-                mergedfp.convertTo(this->image, CV_8U);
-                return;
-            }
-
             // The current 8x8 block we are working on.
             cv::Mat block(channels[0], cv::Rect(col, row, 8, 8));
 
@@ -254,7 +257,20 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
                 }
             }
 
-            this->SwapCoefficients(&trans, this->GetBit(chunk_length, bits_written));
+            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
+            {
+                this->SwapCoefficients(&trans,
+                        this->GetBit(chunk_length, bits_written),
+                        std::get<0>(swap_coefficients),
+                        std::get<1>(swap_coefficients));
+
+                bits_written++;
+
+                if (bits_written == 32)
+                {
+                    break;
+                }
+            }
 
             // Dequantize the 8x8 block.
             for (int x = 0; x < 8; x++)
@@ -277,7 +293,17 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
                 }
             }
 
-            bits_written++;
+            // We only need to encode a 32bit integer, stop once complete.
+            if (bits_written == 32)
+            {
+                // Merge the image channels.
+                cv::Mat mergedfp;
+                cv::merge(channels, mergedfp);
+
+                // Convert the image to unsigned char.
+                mergedfp.convertTo(this->image, CV_8U);
+                return;
+            }
         }
     }
 }
@@ -312,12 +338,6 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
                 col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
-            if (bits_read == end - start)
-            {
-                // We only need to decode a 32bit integer, stop once complete.
-                return chunk_bytes;
-            }
-
             // The current 8x8 block we are working on.
             cv::Mat block(channels[0], cv::Rect(col, row, 8, 8));
 
@@ -327,16 +347,28 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
             // Perform the forward dct.
             cv::dct(block, trans);
 
-            // TODO(James Lee) - Read from multiple swapped coefficients.
             // Decode the data from the swapped coefficients.
-            this->SetBit(&chunk_bytes.back(), bits_read % 8, (trans.at<float>(2, 0) > trans.at<float>(0, 2)));
-
-            bits_read++;
-
-            if (!(bits_read == end - start) && (bits_read % 8 == 0))
+            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
             {
-                // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
-                chunk_bytes.emplace_back(0);
+                std::tuple<int, int> a = std::get<0>(swap_coefficients);
+                std::tuple<int, int> b = std::get<1>(swap_coefficients);
+
+                this->SetBit(&chunk_bytes.back(),
+                        bits_read % 8,
+                        (trans.at<float>(std::get<0>(a), std::get<1>(a)) < trans.at<float>(std::get<0>(b), std::get<1>(b))));
+
+                bits_read++;
+
+                if (bits_read == end - start)
+                {
+                    // We only need to decode a 32bit integer, stop once complete.
+                    return chunk_bytes;
+                }
+                else if (bits_read % 8 == 0)
+                {
+                    // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
+                    chunk_bytes.emplace_back(0);
+                }
             }
         }
     }
@@ -373,12 +405,6 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
                 col = start % ((imagefp.cols - 8) / 8) * 8;
             }
 
-            if (bits_read == 32)
-            {
-                // We only need to decode a 32bit integer, stop once complete.
-                return chunk_length;
-            }
-
             // The current 8x8 block we are working on.
             cv::Mat block(channels[0], cv::Rect(col, row, 8, 8));
 
@@ -388,11 +414,24 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
             // Perform the forward dct.
             cv::dct(block, trans);
 
-            // TODO(James Lee) - Read from multiple swapped coefficients.
             // Decode the data from the swapped coefficients.
-            this->SetBit(&chunk_length, bits_read, (trans.at<float>(2, 0) > trans.at<float>(0, 2)));
+            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
+            {
+                std::tuple<int, int> a = std::get<0>(swap_coefficients);
+                std::tuple<int, int> b = std::get<1>(swap_coefficients);
 
-            bits_read++;
+                this->SetBit(&chunk_length,
+                        bits_read,
+                        (trans.at<float>(std::get<0>(a), std::get<1>(a)) < trans.at<float>(std::get<0>(b), std::get<1>(b))));
+
+                bits_read++;
+
+                if (bits_read == 32)
+                {
+                    // We only need to decode a 32bit integer, stop once complete.
+                    return chunk_length;
+                }
+            }
         }
     }
 
@@ -408,10 +447,10 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
  * @param block Pointer to the 8x8 block we are currently operating on.
  * @param value The value which is being stored, should be 0 or 1.
  */
-void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value)
+void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value, const std::tuple<int, int> &a, const std::tuple<int, int> &b)
 {
-    float low = block->at<float>(0, 2);
-    float high = block->at<float>(2, 0);
+    float low = block->at<float>(std::get<0>(a), std::get<1>(a));
+    float high = block->at<float>(std::get<0>(b), std::get<1>(b));
 
     // Swap the dct coefficients to match the value bit.
     if (value && (low > high))
@@ -434,6 +473,6 @@ void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value)
         high -= this->persistence;
     }
 
-    block->at<float>(0, 2) = low;
-    block->at<float>(2, 0) = high;
+    block->at<float>(std::get<0>(a), std::get<1>(a)) = low;
+    block->at<float>(std::get<0>(b), std::get<1>(b)) = high;
 }
