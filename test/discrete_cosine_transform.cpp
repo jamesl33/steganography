@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <catch.hpp>
 #include "discrete_cosine_transform.hpp"
+#include "exceptions.hpp"
 
 TEST_CASE("Encode/Decode using the DCT technique", "[DiscreteCosineTransform]")
 {
@@ -50,4 +51,16 @@ TEST_CASE("Encode/Decode using the DCT technique", "[DiscreteCosineTransform]")
     // clean up ready for the next loop
     remove("steg-solid_white.jpg");
     remove("steg-hello_world.txt");
+}
+
+TEST_CASE("Encode failure using the DCT technique", "[DiscreteCosineTransform]")
+{
+    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1);
+    REQUIRE_THROWS_AS(encode_dct.Encode("test/files/lorem_ipsum.txt"), EncodeException);
+}
+
+TEST_CASE("Decode failure using the DCT technique", "[DiscreteCosineTransform]")
+{
+    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1);
+    REQUIRE_THROWS_AS(decode_dct.Decode(), DecodeException);
 }

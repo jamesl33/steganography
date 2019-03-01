@@ -16,6 +16,7 @@ set(SOURCE_FILES
 )
 
 set(TEST_FILES
+    test/steganography.cpp
     test/least_significant_bit.cpp
     test/discrete_cosine_transform.cpp
 )

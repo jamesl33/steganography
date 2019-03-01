@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <catch.hpp>
 #include "least_significant_bit.hpp"
+#include "exceptions.hpp"
 
 TEST_CASE("Encode/Decode using the LSB technique", "[LeastSignificantBit]")
 {
@@ -56,4 +57,16 @@ TEST_CASE("Encode/Decode using the LSB technique", "[LeastSignificantBit]")
         remove("steg-solid_white.png");
         remove("steg-hello_world.txt");
     }
+}
+
+TEST_CASE("Encode failure using the LSB technique", "[LeastSignificantBit]")
+{
+    LeastSignificantBit encode_lsb = LeastSignificantBit("test/files/solid_white.png", 1);
+    REQUIRE_THROWS_AS(encode_lsb.Encode("test/files/lorem_ipsum.txt"), EncodeException);
+}
+
+TEST_CASE("Decode failure using the LSB technique", "[LeastSignificantBit]")
+{
+    LeastSignificantBit decode_lsb = LeastSignificantBit("test/files/solid_white.png", 1);
+    REQUIRE_THROWS_AS(decode_lsb.Decode(), DecodeException);
 }
