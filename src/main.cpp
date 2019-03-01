@@ -99,15 +99,27 @@ int main(int argc, char **argv)
             help(parser, "encode");
         }
 
-        if (std::string(options.get("technique")) == "lsb")
-        {
-            LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
-            lsb.Encode(arguments[1]);
+        try {
+            if (std::string(options.get("technique")) == "lsb")
+            {
+                LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
+                lsb.Encode(arguments[1]);
+            }
+            else if (std::string(options.get("technique")) == "dct")
+            {
+                DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("persistence"));
+                dct.Encode(arguments[1]);
+            }
         }
-        else if (std::string(options.get("technique")) == "dct")
+        catch (ImageException &e)
         {
-            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("persistence"));
-            dct.Encode(arguments[1]);
+            std::cerr << e.what() << std::endl;
+            exit(1);
+        }
+        catch (EncodeException &e)
+        {
+            std::cerr << e.what() << std::endl;
+            exit(1);
         }
     }
     else if (arguments[0] == "de" || arguments[0] == "decode")
@@ -117,15 +129,27 @@ int main(int argc, char **argv)
             help(parser, "decode");
         }
 
-        if (std::string(options.get("technique")) == "lsb")
-        {
-            LeastSignificantBit lsb = LeastSignificantBit(arguments[1], options.get("depth"));
-            lsb.Decode();
+        try {
+            if (std::string(options.get("technique")) == "lsb")
+            {
+                LeastSignificantBit lsb = LeastSignificantBit(arguments[1], options.get("depth"));
+                lsb.Decode();
+            }
+            else if (std::string(options.get("technique")) == "dct")
+            {
+                DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("persistence"));
+                dct.Decode();
+            }
         }
-        else if (std::string(options.get("technique")) == "dct")
+        catch (ImageException &e)
         {
-            DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("persistence"));
-            dct.Decode();
+            std::cerr << e.what() << std::endl;
+            exit(1);
+        }
+        catch (DecodeException &e)
+        {
+            std::cerr << e.what() << std::endl;
+            exit(1);
         }
     }
 }

@@ -200,6 +200,11 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
             }
         }
     }
+
+    if (!chunk_bytes.empty())
+    {
+        throw EncodeException("Error: Failed to encode payload, carrier too small");
+    }
 }
 
 /**
@@ -306,6 +311,11 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
             }
         }
     }
+
+    if (bits_written < 32)
+    {
+        throw EncodeException("Error: Failed to encode payload length, carrier too small");
+    }
 }
 
 /**
@@ -373,7 +383,7 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
         }
     }
 
-    return std::vector<unsigned char>{}; // This "should" not be reached
+    throw DecodeException("Error: Failed to decode payload");
 }
 
 /**
@@ -435,7 +445,7 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
         }
     }
 
-    return 0; // This "should" not be reached
+    throw DecodeException("Error: Failed to decode payload length");
 }
 
 /**

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include <tuple>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "steganography.hpp"
+#include "exceptions.hpp"
 
 #ifndef DISCRETE_COSINE_TRANSFORM_HPP
 #define DISCRETE_COSINE_TRANSFORM_HPP

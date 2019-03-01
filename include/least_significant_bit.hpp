@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <queue>
 #include "steganography.hpp"
+#include "exceptions.hpp"
 
 #ifndef LEAST_SIGNIFICANT_BIT_HPP
 #define LEAST_SIGNIFICANT_BIT_HPP

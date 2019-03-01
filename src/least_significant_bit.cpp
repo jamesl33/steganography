@@ -135,6 +135,11 @@ void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsign
             }
         }
     }
+
+    if (!chunk_bytes.empty())
+    {
+        throw EncodeException("Error: Failed to encode payload, carrier too small");
+    }
 }
 
 /**
@@ -187,6 +192,11 @@ void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int
                 }
             }
         }
+    }
+
+    if (bits_written < 32)
+    {
+        throw EncodeException("Error: Failed to encode payload length, carrier too small");
     }
 }
 
@@ -249,7 +259,7 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
         }
     }
 
-    return std::vector<unsigned char>{}; // This "should" not be reached
+    throw DecodeException("Error: Failed to decode payload");
 }
 
 /**
@@ -305,5 +315,5 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
         }
     }
 
-    return 0; // This "should" not be reached
+    throw DecodeException("Error: Failed to decode payload length");
 }

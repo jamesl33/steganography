@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include <boost/filesystem.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "exceptions.hpp"
 
 #ifndef STEGANOGRAPHY_HPP
 #define STEGANOGRAPHY_HPP
@@ -43,8 +44,7 @@ class Steganography
 
         if (!this->image.data)
         {
-            std::cerr << "Error: Failed to open input image" << std::endl;
-            exit(1);
+            throw ImageException("Error: Failed to open input image");
         }
     }
 
