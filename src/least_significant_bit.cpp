@@ -102,26 +102,21 @@ void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsign
                     cha = (start % this->image.channels());
                 }
 
-                if (chunk_bytes.empty())
-                {
-                    return;
-                }
-
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
                     // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
-                    case 3:
-                    {
-                        this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], bit, this->GetBit(chunk_bytes.front(), bits_written % 8));
-                        break;
-                    }
-                    case 4:
-                    {
-                        this->SetBit(&this->image.at<cv::Vec4b>(row, col)[cha], bit, this->GetBit(chunk_bytes.front(), bits_written % 8));
-                        break;
-                    }
+                        case 3:
+                        {
+                            this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], bit, this->GetBit(chunk_bytes.front(), bits_written % 8));
+                            break;
+                        }
+                        case 4:
+                        {
+                            this->SetBit(&this->image.at<cv::Vec4b>(row, col)[cha], bit, this->GetBit(chunk_bytes.front(), bits_written % 8));
+                            break;
+                        }
                     }
 
                     bits_written++;
@@ -130,6 +125,11 @@ void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsign
                     {
                         // We have encoded a full byte now, pop it from the queue.
                         chunk_bytes.pop();
+                    }
+
+                    if (chunk_bytes.empty())
+                    {
+                        return;
                     }
                 }
             }
@@ -160,30 +160,30 @@ void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int
                     cha = (start % this->image.channels());
                 }
 
-                if (bits_written == 32)
-                {
-                    // We only need to encode a 32bit integer, stop once complete.
-                    return;
-                }
-
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
                     // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
-                    case 3:
-                    {
-                        this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], bit, this->GetBit(chunk_length, bits_written));
-                        break;
-                    }
-                    case 4:
-                    {
-                        this->SetBit(&this->image.at<cv::Vec4b>(row, col)[cha], bit, this->GetBit(chunk_length, bits_written));
-                        break;
-                    }
+                        case 3:
+                        {
+                            this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], bit, this->GetBit(chunk_length, bits_written));
+                            break;
+                        }
+                        case 4:
+                        {
+                            this->SetBit(&this->image.at<cv::Vec4b>(row, col)[cha], bit, this->GetBit(chunk_length, bits_written));
+                            break;
+                        }
                     }
 
                     bits_written++;
+
+                    if (bits_written == 32)
+                    {
+                        // We only need to encode a 32bit integer, stop once complete.
+                        return;
+                    }
                 }
             }
         }
@@ -215,26 +215,21 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
                     cha = (start % this->image.channels());
                 }
 
-                if (bits_read == end - start)
-                {
-                    return chunk_bytes;
-                }
-
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
                     // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
-                    case 3:
-                    {
-                        this->SetBit(&chunk_bytes.back(), bits_read % 8, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], bit));
-                        break;
-                    }
-                    case 4:
-                    {
-                        this->SetBit(&chunk_bytes.back(), bits_read % 8, this->GetBit(this->image.at<cv::Vec4b>(row, col)[cha], bit));
-                        break;
-                    }
+                        case 3:
+                        {
+                            this->SetBit(&chunk_bytes.back(), bits_read % 8, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], bit));
+                            break;
+                        }
+                        case 4:
+                        {
+                            this->SetBit(&chunk_bytes.back(), bits_read % 8, this->GetBit(this->image.at<cv::Vec4b>(row, col)[cha], bit));
+                            break;
+                        }
                     }
 
                     bits_read++;
@@ -243,6 +238,11 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
                     {
                         // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
                         chunk_bytes.emplace_back(0);
+                    }
+
+                    if (bits_read == end - start)
+                    {
+                        return chunk_bytes;
                     }
                 }
             }
@@ -276,30 +276,30 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
                     cha = (start % this->image.channels());
                 }
 
-                if (bits_read == 32)
-                {
-                    // We only need to decode a 32bit integer, stop once complete.
-                    return chunk_length;
-                }
-
                 for (int bit = 0; bit < this->bit_depth; bit++)
                 {
                     // Support images which have either 3 or 4 channels.
                     switch (this->image.channels())
                     {
-                    case 3:
-                    {
-                        this->SetBit(&chunk_length, bits_read, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], bit));
-                        break;
-                    }
-                    case 4:
-                    {
-                        this->SetBit(&chunk_length, bits_read, this->GetBit(this->image.at<cv::Vec4b>(row, col)[cha], bit));
-                        break;
-                    }
+                        case 3:
+                        {
+                            this->SetBit(&chunk_length, bits_read, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], bit));
+                            break;
+                        }
+                        case 4:
+                        {
+                            this->SetBit(&chunk_length, bits_read, this->GetBit(this->image.at<cv::Vec4b>(row, col)[cha], bit));
+                            break;
+                        }
                     }
 
                     bits_read++;
+
+                    if (bits_read == 32)
+                    {
+                        // We only need to decode a 32bit integer, stop once complete.
+                        return chunk_length;
+                    }
                 }
             }
         }
