@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+set(CMAKE_CXX_STANDARD 11)
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 file(DOWNLOAD https://raw.githubusercontent.com/myint/optparse/v1.0/optparse.h include/optparse.hpp)
