@@ -14,7 +14,7 @@ set(SOURCE_FILES
 )
 
 set(TEST_FILES
-    # TODO - Add some unit testing
+    test/least_significant_bit.cpp
 )
 
 add_executable(steganography src/main.cpp ${SOURCE_FILES})
