@@ -38,7 +38,7 @@ std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::p
     }
     else
     {
-        std::cerr << "Error: Failed to open input payload file" << std::endl;
+        throw EncodeException("Error: Failed to open input payload file");
     }
 
     file.close();
@@ -64,7 +64,7 @@ void Steganography::WritePayload(const boost::filesystem::path &payload_path, co
     }
     else
     {
-        std::cerr << "Error: Failed to open output payload file" << std::endl;
+        throw DecodeException("Error: Failed to open output payload file");
     }
 
     file.close();
