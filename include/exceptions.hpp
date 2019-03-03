@@ -23,18 +23,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 class ImageException : public std::runtime_error
 {
     public:
+        /**
+         * Default constructor for the ImageException class which is an
+         * exception that is thrown when there is an issue processing an image.
+         * @param message A detailed message explaining what occurred.
+         */
         explicit ImageException(const std::string &message) : std::runtime_error(message) {};
 };
 
 class EncodeException : public std::runtime_error
 {
     public:
+        /**
+         * Default constructor for the EncodeException class which is an
+         * exception that is thrown when there is an issue during the encoding
+         * process.
+         * @param message A detailed message explaining what occurred.
+         */
         explicit EncodeException(const std::string &message) : std::runtime_error(message) {};
 };
 
 class DecodeException : public std::runtime_error
 {
     public:
+        /**
+         * Default constructor for the DecodeException class which is an
+         * exception that is thrown when there is an issue during the decoding
+         * process.
+         * @param message A detailed message explaining what occurred.
+         */
         explicit DecodeException(const std::string &message) : std::runtime_error(message) {};
 };
 
