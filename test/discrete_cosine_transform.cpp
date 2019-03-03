@@ -23,14 +23,14 @@ TEST_CASE("Encode/Decode using the DCT technique", "[DiscreteCosineTransform]")
 {
     std::vector<unsigned char> correct_payload = {'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'};
 
-    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 5);
+    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 4, 5);
     encode_dct.Encode("test/files/hello_world.txt");
 
     // check to see if the steganographic image was saved with the correct filename
     std::ifstream steg_carrier("steg-solid_white.jpg");
     REQUIRE(steg_carrier.good());
 
-    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("steg-solid_white.jpg", 5);
+    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("steg-solid_white.jpg", 4, 5);
     decode_dct.Decode();
 
     // check to see if the payload was decoded with the correct filename
@@ -55,12 +55,12 @@ TEST_CASE("Encode/Decode using the DCT technique", "[DiscreteCosineTransform]")
 
 TEST_CASE("Encode failure using the DCT technique", "[DiscreteCosineTransform]")
 {
-    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1);
+    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1, 1);
     REQUIRE_THROWS_AS(encode_dct.Encode("test/files/lorem_ipsum.txt"), EncodeException);
 }
 
 TEST_CASE("Decode failure using the DCT technique", "[DiscreteCosineTransform]")
 {
-    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1);
+    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1, 1);
     REQUIRE_THROWS_AS(decode_dct.Decode(), DecodeException);
 }

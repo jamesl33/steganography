@@ -56,6 +56,11 @@ int main(int argc, char **argv)
         .type("int")
         .set_default(1);
 
+    parser.add_option("-s", "--swap-count")
+        .help("dct swap count, higher values allow for more storage but cause more distortion, excepts values between '1' and '4'")
+        .type("int")
+        .set_default(4);
+
     parser.add_option("-p", "--persistence")
         .help("dct encode persistence, higher values ensure the hidden data persists but causes more distortion")
         .type("int")
@@ -107,7 +112,7 @@ int main(int argc, char **argv)
             }
             else if (std::string(options.get("technique")) == "dct")
             {
-                DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("persistence"));
+                DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[2], options.get("swap_count"), options.get("persistence"));
                 dct.Encode(arguments[1]);
             }
         }
@@ -137,7 +142,7 @@ int main(int argc, char **argv)
             }
             else if (std::string(options.get("technique")) == "dct")
             {
-                DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("persistence"));
+                DiscreteCosineTransform dct = DiscreteCosineTransform(arguments[1], options.get("swap_count"), options.get("persistence"));
                 dct.Decode();
             }
         }

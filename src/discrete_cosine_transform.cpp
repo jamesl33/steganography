@@ -147,12 +147,12 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
                 }
             }
 
-            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
+            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
             {
-                this->SwapCoefficients(&trans,
-                        this->GetBit(chunk_bytes.front(), bits_written % 8),
-                        std::get<0>(swap_coefficients),
-                        std::get<1>(swap_coefficients));
+                std::tuple<int, int> a = std::get<0>(coefficients[i]);
+                std::tuple<int, int> b = std::get<1>(coefficients[i]);
+
+                this->SwapCoefficients(&trans, this->GetBit(chunk_bytes.front(), bits_written % 8), a, b);
 
                 bits_written++;
 
@@ -262,12 +262,12 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
                 }
             }
 
-            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
+            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
             {
-                this->SwapCoefficients(&trans,
-                        this->GetBit(chunk_length, bits_written),
-                        std::get<0>(swap_coefficients),
-                        std::get<1>(swap_coefficients));
+                std::tuple<int, int> a = std::get<0>(coefficients[i]);
+                std::tuple<int, int> b = std::get<1>(coefficients[i]);
+
+                this->SwapCoefficients(&trans, this->GetBit(chunk_length, bits_written), a, b);
 
                 bits_written++;
 
@@ -358,10 +358,10 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
             cv::dct(block, trans);
 
             // Decode the data from the swapped coefficients.
-            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
+            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
             {
-                std::tuple<int, int> a = std::get<0>(swap_coefficients);
-                std::tuple<int, int> b = std::get<1>(swap_coefficients);
+                std::tuple<int, int> a = std::get<0>(coefficients[i]);
+                std::tuple<int, int> b = std::get<1>(coefficients[i]);
 
                 this->SetBit(&chunk_bytes.back(),
                         bits_read % 8,
@@ -425,10 +425,10 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
             cv::dct(block, trans);
 
             // Decode the data from the swapped coefficients.
-            for (std::tuple<std::tuple<int, int>, std::tuple<int, int>> swap_coefficients : coefficients)
+            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
             {
-                std::tuple<int, int> a = std::get<0>(swap_coefficients);
-                std::tuple<int, int> b = std::get<1>(swap_coefficients);
+                std::tuple<int, int> a = std::get<0>(coefficients[i]);
+                std::tuple<int, int> b = std::get<1>(coefficients[i]);
 
                 this->SetBit(&chunk_length,
                         bits_read,
