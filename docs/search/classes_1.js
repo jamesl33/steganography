@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['leastsignificantbit',['LeastSignificantBit',['../classLeastSignificantBit.html',1,'']]]
+  ['encodeexception',['EncodeException',['../classEncodeException.html',1,'']]]
 ];

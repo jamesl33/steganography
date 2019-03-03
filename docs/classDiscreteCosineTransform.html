@@ -83,8 +83,8 @@ Inheritance diagram for DiscreteCosineTransform:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3362f9b2e2aa5f751889316048249f67"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a3362f9b2e2aa5f751889316048249f67">DiscreteCosineTransform</a> (const boost::filesystem::path &amp;<a class="el" href="classSteganography.html#a71f77ceab71a40a72db410442f87d303">image_path</a>, int <a class="el" href="classDiscreteCosineTransform.html#a54f1c6fd34fa80aa945a6dba1188dda3">persistence</a>)</td></tr>
-<tr class="separator:a3362f9b2e2aa5f751889316048249f67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2171b4a0455f122bb3edcd7e1bdb7938"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a2171b4a0455f122bb3edcd7e1bdb7938">DiscreteCosineTransform</a> (const boost::filesystem::path &amp;<a class="el" href="classSteganography.html#a71f77ceab71a40a72db410442f87d303">image_path</a>, int <a class="el" href="classDiscreteCosineTransform.html#a8b2aeab1c1378d7fff089e3d490a06a2">swap_count</a>, int <a class="el" href="classDiscreteCosineTransform.html#a54f1c6fd34fa80aa945a6dba1188dda3">persistence</a>)</td></tr>
+<tr class="separator:a2171b4a0455f122bb3edcd7e1bdb7938"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c85dc23405753f98b912746f5246c98"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a7c85dc23405753f98b912746f5246c98">Encode</a> (const boost::filesystem::path &amp;)</td></tr>
 <tr class="separator:a7c85dc23405753f98b912746f5246c98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3bda4da10551a88a8d26ef01148f658"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#aa3bda4da10551a88a8d26ef01148f658">Decode</a> ()</td></tr>
@@ -103,11 +103,13 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:afcd0cdaa6122046d710a9e8a63bd79df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2553c08d796a8ddac0286b611059802a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a2553c08d796a8ddac0286b611059802a">DecodeChunkLength</a> (const int &amp;)</td></tr>
 <tr class="separator:a2553c08d796a8ddac0286b611059802a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00b1a20dba1ab9463c4391cd27232aa3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a00b1a20dba1ab9463c4391cd27232aa3">SwapCoefficients</a> (cv::Mat *, const int &amp;)</td></tr>
-<tr class="separator:a00b1a20dba1ab9463c4391cd27232aa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a82cc4860e54625e246c9d993eb8891"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a6a82cc4860e54625e246c9d993eb8891">SwapCoefficients</a> (cv::Mat *, const int &amp;, const std::tuple&lt; int, int &gt; &amp;, const std::tuple&lt; int, int &gt; &amp;)</td></tr>
+<tr class="separator:a6a82cc4860e54625e246c9d993eb8891"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:a8b2aeab1c1378d7fff089e3d490a06a2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a8b2aeab1c1378d7fff089e3d490a06a2">swap_count</a></td></tr>
+<tr class="separator:a8b2aeab1c1378d7fff089e3d490a06a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54f1c6fd34fa80aa945a6dba1188dda3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a54f1c6fd34fa80aa945a6dba1188dda3">persistence</a></td></tr>
 <tr class="separator:a54f1c6fd34fa80aa945a6dba1188dda3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -131,8 +133,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a942b551944b31a7e12671de9170f80c0 inherit pro_attribs_classSteganography"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3362f9b2e2aa5f751889316048249f67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3362f9b2e2aa5f751889316048249f67">&#9670;&nbsp;</a></span>DiscreteCosineTransform()</h2>
+<a id="a2171b4a0455f122bb3edcd7e1bdb7938"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2171b4a0455f122bb3edcd7e1bdb7938">&#9670;&nbsp;</a></span>DiscreteCosineTransform()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -145,6 +147,12 @@ Additional Inherited Members</h2></td></tr>
           <td>(</td>
           <td class="paramtype">const boost::filesystem::path &amp;&#160;</td>
           <td class="paramname"><em>image_path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>swap_count</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -167,6 +175,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Default constructor for the <a class="el" href="classDiscreteCosineTransform.html">DiscreteCosineTransform</a> class which overrides the default constructor from the <a class="el" href="classSteganography.html">Steganography</a> class. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">image_path</td><td>The path to the input carrier image. </td></tr>
+    <tr><td class="paramname">swap_count</td><td>The amount of DCT coefficients to swap. </td></tr>
     <tr><td class="paramname">persistence</td><td>The persistence value for this instance. </td></tr>
   </table>
   </dd>
@@ -405,8 +414,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a00b1a20dba1ab9463c4391cd27232aa3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00b1a20dba1ab9463c4391cd27232aa3">&#9670;&nbsp;</a></span>SwapCoefficients()</h2>
+<a id="a6a82cc4860e54625e246c9d993eb8891"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a82cc4860e54625e246c9d993eb8891">&#9670;&nbsp;</a></span>SwapCoefficients()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -424,7 +433,19 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const int &amp;&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::tuple&lt; int, int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::tuple&lt; int, int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -471,6 +492,29 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Value which will be applied during the DCT coefficient swapping. Higher values ensure that the data persists, however, cause more visual degradation. </p>
+
+</div>
+</div>
+<a id="a8b2aeab1c1378d7fff089e3d490a06a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b2aeab1c1378d7fff089e3d490a06a2">&#9670;&nbsp;</a></span>swap_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DiscreteCosineTransform::swap_count</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>How many DCT coefficients to swap. A higher swap count allows for higher storage capacity, however, will cause more visual degradation. </p>
 
 </div>
 </div>

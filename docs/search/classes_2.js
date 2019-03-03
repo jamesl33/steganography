@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['steganography',['Steganography',['../classSteganography.html',1,'']]]
+  ['imageexception',['ImageException',['../classImageException.html',1,'']]]
 ];

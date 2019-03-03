@@ -73,7 +73,7 @@ $(function() {
 <li><a href="https://www.boost.org/">Boost C++ Libraries</a></li>
 </ul>
 <h2>Building </h2>
-<p>The steganography executable is build using the CMake build system and requires all of the libraries listed above in the <a href="#Dependencies">dependencies</a> section.</p>
+<p>The steganography executable is build using the CMake build system and requires all of the libraries listed above in the dependencies section.</p>
 <div class="fragment"><div class="line"># Configure the build</div><div class="line">cmake -B build</div><div class="line"></div><div class="line"># Build steganography with the release optimisations</div><div class="line">cmake --build build --config Release --target steganography</div><div class="line"></div><div class="line"># Run the executable</div><div class="line">./bin/steganography</div></div><!-- fragment --><h2>Testing </h2>
 <p>Unit testing is provided to determine if the application is working correctly, the testing uses <a href="https://github.com/catchorg/Catch2">Catch2</a> and can be run by building and running the steganography-testing executable.</p>
 <div class="fragment"><div class="line"># Configure the build</div><div class="line">cmake -B build</div><div class="line"></div><div class="line"># Build steganography-testing with the release optimisations</div><div class="line">cmake --build build --config Release --target steganography-testing</div><div class="line"></div><div class="line"># Run the unit testing</div><div class="line">./bin/steganography-testing</div></div><!-- fragment --><h2>Usage </h2>
