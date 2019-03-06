@@ -25,6 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  */
 void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
 {
+    // Ensure that we can encode the payload into the carrier image
+    int image_capacity = (this->image.rows * this->image.cols * this->image.channels()) * this->bit_depth;
+    int payload_size = boost::filesystem::file_size(payload_path) * 8;
+
+    if (payload_size > image_capacity)
+    {
+        throw EncodeException("Error: Failed to encode payload, carrier too small");
+    }
+
     // Convert the payload filename to byte vector.
     std::string payload_filename = payload_path.filename().string();
     std::vector<unsigned char> payload_filename_bytes(payload_filename.begin(), payload_filename.end());
@@ -135,11 +144,6 @@ void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsign
             }
         }
     }
-
-    if (!chunk_bytes.empty())
-    {
-        throw EncodeException("Error: Failed to encode payload, carrier too small");
-    }
 }
 
 /**
@@ -192,11 +196,6 @@ void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int
                 }
             }
         }
-    }
-
-    if (bits_written < 32)
-    {
-        throw EncodeException("Error: Failed to encode payload length, carrier too small");
     }
 }
 

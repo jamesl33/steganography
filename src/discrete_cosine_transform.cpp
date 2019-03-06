@@ -42,6 +42,15 @@ const std::vector<std::tuple<std::tuple<int, int>, std::tuple<int, int>>> coeffi
  */
 void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path)
 {
+    // Ensure that we can encode the payload into the carrier image
+    int image_capacity = ((this->image.rows / 8) * (this->image.cols / 8)) * this->swap_count;
+    int payload_size = boost::filesystem::file_size(payload_path) * 8;
+
+    if (payload_size > image_capacity)
+    {
+        throw EncodeException("Error: Failed to encode payload, carrier too small");
+    }
+
     // Convert the payload filename to byte vector.
     std::string payload_filename = payload_path.filename().string();
     std::vector<unsigned char> payload_filename_bytes(payload_filename.begin(), payload_filename.end());
@@ -200,11 +209,6 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
             }
         }
     }
-
-    if (!chunk_bytes.empty())
-    {
-        throw EncodeException("Error: Failed to encode payload, carrier too small");
-    }
 }
 
 /**
@@ -310,11 +314,6 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
                 return;
             }
         }
-    }
-
-    if (bits_written < 32)
-    {
-        throw EncodeException("Error: Failed to encode payload length, carrier too small");
     }
 }
 
