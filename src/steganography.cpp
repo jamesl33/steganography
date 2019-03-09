@@ -25,21 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  */
 std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::path &payload_path)
 {
-    char byte;
-    std::ifstream file(payload_path.string(), std::ios::binary);
-    std::vector<unsigned char> payload;
+    boost::filesystem::ifstream file(payload_path, std::ios::binary);
+    file.unsetf(std::ios::skipws); // do not skip whitespace
 
-    if (file.good())
-    {
-        while (file.get(byte))
-        {
-            payload.emplace_back(byte);
-        }
-    }
-    else
-    {
-        throw EncodeException("Error: Failed to open input payload file");
-    }
+    std::vector<unsigned char> payload;
+    payload.reserve(boost::filesystem::file_size(payload_path));
+    payload.insert(payload.begin(), std::istream_iterator<unsigned char>(file), std::istream_iterator<unsigned char>());
 
     file.close();
     return payload;
@@ -53,19 +44,9 @@ std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::p
  */
 void Steganography::WritePayload(const boost::filesystem::path &payload_path, const std::vector<unsigned char> &payload)
 {
-    std::ofstream file(payload_path.string(), std::ios::binary);
+    boost::filesystem::ofstream file(payload_path, std::ios::binary);
 
-    if (file.good())
-    {
-        for (unsigned char byte : payload)
-        {
-            file.put(byte);
-        }
-    }
-    else
-    {
-        throw DecodeException("Error: Failed to open output payload file");
-    }
+    std::copy(payload.cbegin(), payload.cend(), std::ostream_iterator<unsigned char>(file));
 
     file.close();
 }
