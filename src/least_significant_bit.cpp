@@ -85,20 +85,23 @@ void LeastSignificantBit::Decode()
 void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsigned char> &chunk)
 {
     int bit = 0;
-    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
-    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
+    cv::MatIterator_<cv::Vec3b> it = this->image.begin<cv::Vec3b>() + start;
+    cv::MatIterator_<cv::Vec3b> en = this->image.end<cv::Vec3b>();
 
     for (; it != en; it++)
     {
-        for (int depth = 0; depth < this->bit_depth; depth++)
+        for (int cha = 0; cha < this->image.channels(); cha++)
         {
-            // Embed the current chunk bit in the carrier
-            this->SetBit(&(*it), depth, this->GetBit(chunk[bit / 8], bit % 8));
-
-            if (++bit == chunk.size() * 8)
+            for (int depth = 0; depth < this->bit_depth; depth++)
             {
-                // We have finished decoding
-                return;
+                // Embed the current chunk bit in the carrier
+                this->SetBit(&(*it)[cha], depth, this->GetBit(chunk[bit / 8], bit % 8));
+
+                if (++bit == chunk.size() * 8)
+                {
+                    // We have finished decoding
+                    return;
+                }
             }
         }
     }
@@ -114,20 +117,23 @@ void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsign
 void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int &chunk_length)
 {
     int bit = 0;
-    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
-    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
+    cv::MatIterator_<cv::Vec3b> it = this->image.begin<cv::Vec3b>() + start;
+    cv::MatIterator_<cv::Vec3b> en = this->image.end<cv::Vec3b>();
 
     for (; it != en; it++)
     {
-        for (int depth = 0; depth < this->bit_depth; depth++)
+        for (int cha = 0; cha < this->image.channels(); cha++)
         {
-            // Embed the current integer bit in the carrier
-            this->SetBit(&(*it), depth, this->GetBit(chunk_length, bit));
-
-            if (++bit == 32)
+            for (int depth = 0; depth < this->bit_depth; depth++)
             {
-                // We have finished decoding
-                return;
+                // Embed the current integer bit in the carrier
+                this->SetBit(&(*it)[cha], depth, this->GetBit(chunk_length, bit));
+
+                if (++bit == 32)
+                {
+                    // We have finished decoding
+                    return;
+                }
             }
         }
     }
@@ -146,20 +152,23 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
     std::vector<unsigned char> chunk((end - start) / 8);
 
     int bit = 0;
-    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
-    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
+    cv::MatIterator_<cv::Vec3b> it = this->image.begin<cv::Vec3b>() + start;
+    cv::MatIterator_<cv::Vec3b> en = this->image.end<cv::Vec3b>();
 
     for (; it != en; it++)
     {
-        for (int depth = 0; depth < this->bit_depth; depth++)
+        for (int cha = 0; cha < this->image.channels(); cha++)
         {
-            // Read the current bit from the steganographic image
-            this->SetBit(&chunk[bit / 8], bit % 8, this->GetBit(*it, depth));
-
-            if (++bit == end - start)
+            for (int depth = 0; depth < this->bit_depth; depth++)
             {
-                // We have decoded the chunk, return it
-                return chunk;
+                // Read the current bit from the steganographic image
+                this->SetBit(&chunk[bit / 8], bit % 8, this->GetBit((*it)[cha], depth));
+
+                if (++bit == end - start)
+                {
+                    // We have decoded the chunk, return it
+                    return chunk;
+                }
             }
         }
     }
@@ -180,25 +189,28 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
     unsigned int chunk_length = 0;
 
     int bit = 0;
-    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
-    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
+    cv::MatIterator_<cv::Vec3b> it = this->image.begin<cv::Vec3b>() + start;
+    cv::MatIterator_<cv::Vec3b> en = this->image.end<cv::Vec3b>();
 
     for (; it != en; it++)
     {
-        for (int depth = 0; depth < this->bit_depth; depth++)
+        for (int cha = 0; cha < this->image.channels(); cha++)
         {
-            // Read the current bit from the steganographic image
-            this->SetBit(&chunk_length, bit, this->GetBit(*it, depth));
-
-            if (++bit == 32)
+            for (int depth = 0; depth < this->bit_depth; depth++)
             {
-                // We have decoded the integer, check if it's valid
-                if (chunk_length > this->image_capacity)
-                {
-                    throw DecodeException("Error: Failed to decode payload length");
-                }
+                // Read the current bit from the steganographic image
+                this->SetBit(&chunk_length, bit, this->GetBit((*it)[cha], depth));
 
-                return chunk_length;
+                if (++bit == 32)
+                {
+                    // We have decoded the integer, check if it's valid
+                    if (chunk_length > this->image_capacity)
+                    {
+                        throw DecodeException("Error: Failed to decode payload length");
+                    }
+
+                    return chunk_length;
+                }
             }
         }
     }
