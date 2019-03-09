@@ -45,11 +45,11 @@ void help(optparse::OptionParser parser, std::string command)
 int main(int argc, char **argv)
 {
     optparse::OptionParser parser = optparse::OptionParser()
-                                        .usage("%prog [options] <command> [arguments]\n\n"
-                                               "where <command> is one of:\n\n"
-                                               "\tencode (en) - Encode a file into a carrier image\n"
-                                               "\tdecode (de) - Decode a file from a carrier image\n\n"
-                                               "Use \"%prog help <command>\" for help on a specific command");
+        .usage("%prog [options] <command> [arguments]\n\n"
+            "where <command> is one of:\n\n"
+            "\tencode (en) - Encode a file into a carrier image\n"
+            "\tdecode (de) - Decode a file from a carrier image\n\n"
+            "Use \"%prog help <command>\" for help on a specific command");
 
     parser.add_option("-d", "--depth")
         .help("encode/decode depth, excepts values between '1' and '8'")
