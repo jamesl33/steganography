@@ -31,87 +31,87 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
  */
 class Steganography
 {
-  public:
-    /**
-     * Default constructor for Steganography class, will be overridden for
-     * different steganography techniques.
-     * @param image_path The path to the input carrier image.
-     */
-    explicit Steganography(const boost::filesystem::path &image_path)
-    {
-        this->image_path = image_path;
-        this->image = cv::imread(image_path.string(), cv::IMREAD_UNCHANGED);
-
-        if (!this->image.data)
+    public:
+        /**
+         * Default constructor for Steganography class, will be overridden for
+         * different steganography techniques.
+         * @param image_path The path to the input carrier image.
+         */
+        explicit Steganography(const boost::filesystem::path &image_path)
         {
-            throw ImageException("Error: Failed to open input image");
+            this->image_path = image_path;
+            this->image = cv::imread(image_path.string(), cv::IMREAD_UNCHANGED);
+
+            if (!this->image.data)
+            {
+                throw ImageException("Error: Failed to open input image");
+            }
         }
-    }
 
-    /**
-     * @pure Encode
-     * Function that must be overridden by the subclass which encodes a payload
-     * into the carrier image using the steganographic technique defined in the
-     * subclass.
-     */
-    virtual void Encode(const boost::filesystem::path &) = 0;
+        /**
+         * @pure Encode
+         * Function that must be overridden by the subclass which encodes a payload
+         * into the carrier image using the steganographic technique defined in the
+         * subclass.
+         */
+        virtual void Encode(const boost::filesystem::path &) = 0;
 
-    /**
-     * @pure Decode
-     * Function that must be overridden by the subclass which decodes a payload
-     * from the carrier image using the steganographic technique defined in the
-     * subclass.
-     */
-    virtual void Decode() = 0;
+        /**
+         * @pure Decode
+         * Function that must be overridden by the subclass which decodes a payload
+         * from the carrier image using the steganographic technique defined in the
+         * subclass.
+         */
+        virtual void Decode() = 0;
 
-  protected:
-    /**
-     * @property image_path
-     * The path to the carrier image stored on disk. This image will not be
-     * modified.
-     */
-    boost::filesystem::path image_path;
+    protected:
+        /**
+         * @property image_path
+         * The path to the carrier image stored on disk. This image will not be
+         * modified.
+         */
+        boost::filesystem::path image_path;
 
-    /**
-     * @property image
-     * An in memory copy of the input image in which we will embed the data.
-     */
-    cv::Mat image;
+        /**
+         * @property image
+         * An in memory copy of the input image in which we will embed the data.
+         */
+        cv::Mat image;
 
-    std::vector<unsigned char> ReadPayload(const boost::filesystem::path &);
-    void WritePayload(const boost::filesystem::path &, const std::vector<unsigned char> &);
+        std::vector<unsigned char> ReadPayload(const boost::filesystem::path &);
+        void WritePayload(const boost::filesystem::path &, const std::vector<unsigned char> &);
 
-    /**
-     * Set the n'th significant bit of a generic type.
-     *
-     * This function is designed to set the n'th significant bit of integer/char types.
-     * It assumes that it is being used correctly; there is no incorrect input detection.
-     *
-     * @tparam target "Any" type which works with bytewise operators, the target to set the bit of.
-     * @param bit Which bit to set in the target.
-     * @param value The value the target bit will be set too.
-     */
-    template <class T>
-    inline void SetBit(T *target, const int &bit, const int &value)
-    {
-        *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
-    }
+        /**
+         * Set the n'th significant bit of a generic type.
+         *
+         * This function is designed to set the n'th significant bit of integer/char types.
+         * It assumes that it is being used correctly; there is no incorrect input detection.
+         *
+         * @tparam target "Any" type which works with bytewise operators, the target to set the bit of.
+         * @param bit Which bit to set in the target.
+         * @param value The value the target bit will be set too.
+         */
+        template <class T>
+        inline void SetBit(T *target, const int &bit, const int &value)
+        {
+            *target ^= (-(unsigned int)value ^ *target) & (1UL << bit);
+        }
 
-    /**
-     * Get the n'th significant bit of a generic type.
-     *
-     * This function is designed to get the n'th significant bit of integer/char types.
-     * It assumes that it is being used correctly; there is no incorrect input detection.
-     *
-     * @tparam target "Any" type which works with bytewise operators, the target to set the but of.
-     * @param bit Which bit to get in the target.
-     * @return The n'th significant bit.
-     */
-    template <class T>
-    inline int GetBit(const T &target, const int &bit)
-    {
-        return (target >> bit) & 1UL;
-    }
+        /**
+         * Get the n'th significant bit of a generic type.
+         *
+         * This function is designed to get the n'th significant bit of integer/char types.
+         * It assumes that it is being used correctly; there is no incorrect input detection.
+         *
+         * @tparam target "Any" type which works with bytewise operators, the target to set the but of.
+         * @param bit Which bit to get in the target.
+         * @return The n'th significant bit.
+         */
+        template <class T>
+        inline int GetBit(const T &target, const int &bit)
+        {
+            return (target >> bit) & 1UL;
+        }
 };
 
 #endif // STEGANOGRAPHY_HPP
