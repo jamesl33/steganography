@@ -18,242 +18,148 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 #include "least_significant_bit.hpp"
 
 /**
- * Encode the payload into the carrier image by embedding into one or more least
- * significant bits.
+ * Encode the payload file into the carrier image by embedding into one or more
+ * least significant bits.
  *
- * @param payload_path The path to the file you are encoding.
+ * @param payload_path Path to the file we are encoding.
+ * @exception EncodeException thrown when encoding fails.
  */
 void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
 {
-    // Ensure that we can encode the payload into the carrier image
-    int image_capacity = (this->image.rows * this->image.cols * this->image.channels()) * this->bit_depth;
-    int payload_size = boost::filesystem::file_size(payload_path) * 8;
-
-    if (payload_size > image_capacity)
+    // Ensure that the carrier has enough room for the payload
+    if (boost::filesystem::file_size(payload_path) * 8 > this->image_capacity)
     {
         throw EncodeException("Error: Failed to encode payload, carrier too small");
     }
 
-    // Convert the payload filename to byte vector.
-    std::string payload_filename = payload_path.filename().string();
-    std::vector<unsigned char> payload_filename_bytes(payload_filename.begin(), payload_filename.end());
+    // Convert the filename to a vector<unsigned char>
+    std::string filename = payload_path.filename().string();
+    std::vector<unsigned char> filename_bytes(filename.begin(), filename.end());
 
-    // Encode the length/content of the filename in the carrier image.
-    this->EncodeChunkLength(0, payload_filename_bytes.size());
-    this->EncodeChunk(32, payload_filename_bytes);
+    // Encode the filename into the carrier image
+    this->EncodeChunkLength(0, filename_bytes.size());
+    this->EncodeChunk(32, filename_bytes);
 
-    // Read the payload into a byte vector.
+    // Read the payload into a vector<unsigned char>
     std::vector<unsigned char> payload_bytes = this->ReadPayload(payload_path);
 
-    // Encode the length/content of the payload in the carrier image.
-    this->EncodeChunkLength(32 + payload_filename_bytes.size() * 8, payload_bytes.size());
-    this->EncodeChunk(64 + payload_filename_bytes.size() * 8, payload_bytes);
+    // Encode the payload into the carrier image
+    this->EncodeChunkLength(32 + filename_bytes.size() * 8, payload_bytes.size());
+    this->EncodeChunk(64 + filename_bytes.size() * 8, payload_bytes);
 
-    // Save the modified image with the "steg-" prefix.
-    boost::filesystem::path steg_image_filename = this->image_path.filename();
-    steg_image_filename.replace_extension(".png");
-
-    // TODO(James Lee) - Expose png compression to the user.
-    cv::imwrite("steg-" + steg_image_filename.string(), this->image, std::vector<int>{CV_IMWRITE_PNG_COMPRESSION, 9});
+    // Write the steganographic image
+    cv::imwrite("steg-" + this->image_path.filename().replace_extension(".png").string(), this->image,
+            std::vector<int>{cv::IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY, 1});
 }
 
 /**
- * Decode the payload from the carrier image by reading from one or more least
- * significant bits.
+ * Decode the payload from the steganographic image by reading from one or more
+ * least significant bits.
  */
 void LeastSignificantBit::Decode()
 {
-    // Decode the filename byte vector from the carrier image.
-    unsigned int payload_filename_length = this->DecodeChunkLength(0);
-    std::vector<unsigned char> payload_filename_bytes = this->DecodeChunk(32, 32 + payload_filename_length * 8);
+    // Decode the filename from the steganographic image
+    unsigned int filename_length = this->DecodeChunkLength(0);
+    std::vector<unsigned char> filename_bytes = this->DecodeChunk(32, 32 + filename_length * 8);
 
-    // Convert the payload filename to a string.
-    std::string payload_filename(payload_filename_bytes.begin(), payload_filename_bytes.end());
+    // Convert the filename vector<unsigned char> to a string
+    std::string payload_filename(filename_bytes.begin(), filename_bytes.end());
 
-    // Decode the payload byte vector from the carrier image.
-    unsigned int payload_length = this->DecodeChunkLength(32 + payload_filename_length * 8);
-    std::vector<unsigned char> payload_bytes = this->DecodeChunk(64 + payload_filename_length * 8, 64 + payload_filename_length * 8 + payload_length * 8);
+    // Decode the payload from the steganographic image
+    unsigned int payload_length = this->DecodeChunkLength(32 + filename_length * 8);
+    std::vector<unsigned char> payload_bytes = this->DecodeChunk(64 + filename_length * 8, 64 + filename_length * 8 + payload_length * 8);
 
-    // Save the payload to it's filename with the "steg-" prefix.
+    // Write the decoded payload
     this->WritePayload("steg-" + payload_filename, payload_bytes);
 }
 
 /**
  * Encode a chunk of information into the carrier image.
  *
- * Before encoding a chunk of information you should first encode it's length
- * using EncodeChunkLength function.
+ * Before encoding a chunk of information you "should" first encode its length
+ * using the EncodeChunkLength function.
  *
- * @param start The pixel index to start encoding at.
- * @param chunk The chunk of information that will be encoded into the carrier image.
+ * @param start The bit index to start encoding at.
+ * @param chunk The chunk of information which will be encoded.
  */
 void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsigned char> &chunk)
 {
-    int bits_written = 0;
-    std::queue<unsigned char> chunk_bytes;
+    int bit = 0;
+    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
+    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
 
-    // Copy the chunk into a queue
-    for (unsigned char byte : chunk)
+    for (; it != en; it++)
     {
-        chunk_bytes.emplace(byte);
-    }
-
-    for (int row = 0; row < this->image.rows; row++)
-    {
-        for (int col = 0; col < this->image.cols; col++)
+        for (int depth = 0; depth < this->bit_depth; depth++)
         {
-            for (int cha = 0; cha < this->image.channels(); cha++)
+            // Embed the current chunk bit in the carrier
+            this->SetBit(&(*it), depth, this->GetBit(chunk[bit / 8], bit % 8));
+
+            if (++bit == chunk.size() * 8)
             {
-                if (row == 0 && col == 0 && cha == 0)
-                {
-                    row = (start / this->image.channels()) / this->image.cols;
-                    col = (start / this->image.channels() % this->image.cols);
-                    cha = (start % this->image.channels());
-                }
-
-                for (int bit = 0; bit < this->bit_depth; bit++)
-                {
-                    // Support images which have either 3 or 4 channels.
-                    switch (this->image.channels())
-                    {
-                        case 3:
-                        {
-                            this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], bit, this->GetBit(chunk_bytes.front(), bits_written % 8));
-                            break;
-                        }
-                        case 4:
-                        {
-                            this->SetBit(&this->image.at<cv::Vec4b>(row, col)[cha], bit, this->GetBit(chunk_bytes.front(), bits_written % 8));
-                            break;
-                        }
-                    }
-
-                    bits_written++;
-
-                    if (bits_written % 8 == 0)
-                    {
-                        // We have encoded a full byte now, pop it from the queue.
-                        chunk_bytes.pop();
-                    }
-
-                    if (chunk_bytes.empty())
-                    {
-                        return;
-                    }
-                }
+                // We have finished decoding
+                return;
             }
         }
     }
 }
 
 /**
- * Encode a 32bit integer stating the length of the following chunk.
+ * Encode a 32bit integer stating the length of the following chunk into the
+ * carrier image.
  *
- * @param start The pixel index to start encoding at.
+ * @param start The bit index to start encoding at.
  * @param chunk_length The length of the next chunk in bytes.
  */
 void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int &chunk_length)
 {
-    int bits_written = 0;
+    int bit = 0;
+    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
+    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
 
-    for (int row = 0; row < this->image.rows; row++)
+    for (; it != en; it++)
     {
-        for (int col = 0; col < this->image.cols; col++)
+        for (int depth = 0; depth < this->bit_depth; depth++)
         {
-            for (int cha = 0; cha < this->image.channels(); cha++)
+            // Embed the current integer bit in the carrier
+            this->SetBit(&(*it), depth, this->GetBit(chunk_length, bit));
+
+            if (++bit == 32)
             {
-                if (row == 0 && col == 0 && cha == 0)
-                {
-                    row = (start / this->image.channels()) / this->image.cols;
-                    col = (start / this->image.channels() % this->image.cols);
-                    cha = (start % this->image.channels());
-                }
-
-                for (int bit = 0; bit < this->bit_depth; bit++)
-                {
-                    // Support images which have either 3 or 4 channels.
-                    switch (this->image.channels())
-                    {
-                        case 3:
-                        {
-                            this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], bit, this->GetBit(chunk_length, bits_written));
-                            break;
-                        }
-                        case 4:
-                        {
-                            this->SetBit(&this->image.at<cv::Vec4b>(row, col)[cha], bit, this->GetBit(chunk_length, bits_written));
-                            break;
-                        }
-                    }
-
-                    bits_written++;
-
-                    if (bits_written == 32)
-                    {
-                        // We only need to encode a 32bit integer, stop once complete.
-                        return;
-                    }
-                }
+                // We have finished decoding
+                return;
             }
         }
     }
 }
 
 /**
- * Decode a chunk of information from the carrier image.
+ * Attempt to decode a chunk of information from the steganographic image.
  *
- * @param start The pixel index to start decoding at.
- * @param end The pixel index to stop decoding at.
- * @return The chunk of information read from the carrier image.
+ * @param start The bit index to start decoding at.
+ * @param end The bit index to stop decoding at.
+ * @return The chunk of information read from the steganographic image.
+ * @exception DecodeException Thrown when decoding fails.
  */
 std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, const int &end)
 {
-    int bits_read = 0;
-    std::vector<unsigned char> chunk_bytes = {0};
+    std::vector<unsigned char> chunk((end - start) / 8);
 
-    for (int row = 0; row < this->image.rows; row++)
+    int bit = 0;
+    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
+    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
+
+    for (; it != en; it++)
     {
-        for (int col = 0; col < this->image.cols; col++)
+        for (int depth = 0; depth < this->bit_depth; depth++)
         {
-            for (int cha = 0; cha < this->image.channels(); cha++)
+            // Read the current bit from the steganographic image
+            this->SetBit(&chunk[bit / 8], bit % 8, this->GetBit(*it, depth));
+
+            if (++bit == end - start)
             {
-                if (row == 0 && col == 0 && cha == 0)
-                {
-                    row = (start / this->image.channels()) / this->image.cols;
-                    col = (start / this->image.channels() % this->image.cols);
-                    cha = (start % this->image.channels());
-                }
-
-                for (int bit = 0; bit < this->bit_depth; bit++)
-                {
-                    // Support images which have either 3 or 4 channels.
-                    switch (this->image.channels())
-                    {
-                        case 3:
-                        {
-                            this->SetBit(&chunk_bytes.back(), bits_read % 8, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], bit));
-                            break;
-                        }
-                        case 4:
-                        {
-                            this->SetBit(&chunk_bytes.back(), bits_read % 8, this->GetBit(this->image.at<cv::Vec4b>(row, col)[cha], bit));
-                            break;
-                        }
-                    }
-
-                    bits_read++;
-
-                    if (!(bits_read == end - start) && (bits_read % 8 == 0))
-                    {
-                        // We have decoded a full byte, place an empty once at the back of the chunk_bytes vector.
-                        chunk_bytes.emplace_back(0);
-                    }
-
-                    if (bits_read == end - start)
-                    {
-                        return chunk_bytes;
-                    }
-                }
+                // We have decoded the chunk, return it
+                return chunk;
             }
         }
     }
@@ -262,54 +168,37 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
 }
 
 /**
- * Decode a 32bit integer stating the length of the following chunk.
+ * Attempt to decode the 32bit integer stating the length of the following
+ * chunk.
  *
- * @param start The pixel index to start decoding at.
- * @return The length of the next chunk in bytes.
+ * @param start The bit index to start decoding at.
+ * @return The length of the following chunk.
+ * @exception DecodeException Thrown when decoding fails.
  */
 unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
 {
-    int bits_read = 0;
     unsigned int chunk_length = 0;
 
-    for (int row = 0; row < this->image.rows; row++)
+    int bit = 0;
+    cv::MatIterator_<unsigned char> it = this->image.begin<unsigned char>() + start;
+    cv::MatIterator_<unsigned char> en = this->image.end<unsigned char>();
+
+    for (; it != en; it++)
     {
-        for (int col = 0; col < this->image.cols; col++)
+        for (int depth = 0; depth < this->bit_depth; depth++)
         {
-            for (int cha = 0; cha < this->image.channels(); cha++)
+            // Read the current bit from the steganographic image
+            this->SetBit(&chunk_length, bit, this->GetBit(*it, depth));
+
+            if (++bit == 32)
             {
-                if (row == 0 && col == 0 && cha == 0)
+                // We have decoded the integer, check if it's valid
+                if (chunk_length > this->image_capacity)
                 {
-                    row = (start / this->image.channels()) / this->image.cols;
-                    col = (start / this->image.channels() % this->image.cols);
-                    cha = (start % this->image.channels());
+                    throw DecodeException("Error: Failed to decode payload length");
                 }
 
-                for (int bit = 0; bit < this->bit_depth; bit++)
-                {
-                    // Support images which have either 3 or 4 channels.
-                    switch (this->image.channels())
-                    {
-                        case 3:
-                        {
-                            this->SetBit(&chunk_length, bits_read, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], bit));
-                            break;
-                        }
-                        case 4:
-                        {
-                            this->SetBit(&chunk_length, bits_read, this->GetBit(this->image.at<cv::Vec4b>(row, col)[cha], bit));
-                            break;
-                        }
-                    }
-
-                    bits_read++;
-
-                    if (bits_read == 32)
-                    {
-                        // We only need to decode a 32bit integer, stop once complete.
-                        return chunk_length;
-                    }
-                }
+                return chunk_length;
             }
         }
     }

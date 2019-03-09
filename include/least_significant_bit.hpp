@@ -24,33 +24,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 class LeastSignificantBit : public Steganography
 {
-  public:
-    /**
-     * Default constructor for LeastSignificantBit class overrides the default
-     * constructor for the Steganography class.
-     * @param image_path The path to the input carrier image.
-     * @param bit_depth The amount of significant bits to set during the embedding process.
-     */
-    LeastSignificantBit(const boost::filesystem::path &image_path, int bit_depth) : Steganography(image_path)
-    {
-        this->bit_depth = bit_depth;
-    }
+    public:
+        /**
+         * Default constructor for LeastSignificantBit class overrides the default
+         * constructor for the Steganography class.
+         * @param image_path The path to the input carrier image.
+         * @param bit_depth The amount of significant bits to set during the embedding process.
+         */
+        LeastSignificantBit(const boost::filesystem::path &image_path, int bit_depth) : Steganography(image_path)
+        {
+            this->bit_depth = bit_depth;
+            this->image_capacity = (this->image.rows * this->image.cols * this->image.channels()) * this -> bit_depth;
+        }
 
-    void Encode(const boost::filesystem::path &);
-    void Decode();
+        void Encode(const boost::filesystem::path &);
+        void Decode();
 
-  private:
-    /**
-     * @property bit_depth
-     * The amount of least significant bits to set during the embedding process.
-     */
-    int bit_depth;
+    private:
+        /**
+         * @property bit_depth
+         * The amount of least significant bits to set during the embedding process.
+         */
+        int bit_depth;
 
-    void EncodeChunk(const int &, const std::vector<unsigned char> &);
-    void EncodeChunkLength(const int &, const unsigned int &);
+        /**
+         * @property image_capacity
+         * The total capacity of the carrier image in bits.
+         */
+        int image_capacity;
 
-    std::vector<unsigned char> DecodeChunk(const int &, const int &);
-    unsigned int DecodeChunkLength(const int &);
+        void EncodeChunk(const int &, const std::vector<unsigned char> &);
+        void EncodeChunkLength(const int &, const unsigned int &);
+
+        std::vector<unsigned char> DecodeChunk(const int &, const int &);
+        unsigned int DecodeChunkLength(const int &);
 };
 
 #endif // LEAST_SIGNIFICANT_BIT_HPP
