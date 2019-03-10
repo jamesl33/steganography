@@ -108,10 +108,16 @@ Private Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:a82694b556b8d81b6f4c4f0a87640fa54"><td class="memItemLeft" align="right" valign="top"><a id="a82694b556b8d81b6f4c4f0a87640fa54"></a>
+std::vector&lt; cv::Mat &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>channels</b></td></tr>
+<tr class="separator:a82694b556b8d81b6f4c4f0a87640fa54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b2aeab1c1378d7fff089e3d490a06a2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a8b2aeab1c1378d7fff089e3d490a06a2">swap_count</a></td></tr>
 <tr class="separator:a8b2aeab1c1378d7fff089e3d490a06a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54f1c6fd34fa80aa945a6dba1188dda3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a54f1c6fd34fa80aa945a6dba1188dda3">persistence</a></td></tr>
 <tr class="separator:a54f1c6fd34fa80aa945a6dba1188dda3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0f2223ef8eaabf51d165a584fc7315f"><td class="memItemLeft" align="right" valign="top"><a id="ab0f2223ef8eaabf51d165a584fc7315f"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>image_capacity</b></td></tr>
+<tr class="separator:ab0f2223ef8eaabf51d165a584fc7315f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -206,7 +212,7 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Decode the payload from the carrier image. </p>
+<p>Decode the payload from the steganographic image by comparing DCT coefficients. </p>
 
 <p>Implements <a class="el" href="classSteganography.html#aa629b72efd2ed7a08b475710522630d9">Steganography</a>.</p>
 
@@ -245,15 +251,21 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Decode a chunk of information from the carrier image.</p>
+<p>Attempt to decode a chunk of information from the steganographic image.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start decoding at. </td></tr>
-    <tr><td class="paramname">end</td><td>The pixel index to stop decoding at. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start decoding at. </td></tr>
+    <tr><td class="paramname">end</td><td>The bit index to stop decoding at. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The chunk of information read from the carrier image. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The chunk of information read from the steganographic image. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classDecodeException.html">DecodeException</a></td><td>Thrown when decoding fails. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -280,14 +292,20 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Decode a 32bit integer stating the length of the following chunk.</p>
+<p>Attempt to decode the 32bit integer stating the length of the following chunk.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start decoding at. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start decoding at. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The length of the next chunk in bytes. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The length of the following chunk. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classDecodeException.html">DecodeException</a></td><td>Thrown when decoding fails. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -314,10 +332,16 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Encode the payload into the carrier image using DCT coefficient swapping.</p>
+<p>Encode the payload file into the carrier image by swapping DCT coefficients.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">payload_path</td><td>The path to the file you are encoding. </td></tr>
+    <tr><td class="paramname">payload_path</td><td>Path to the file we are encoding. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classEncodeException.html">EncodeException</a></td><td>thrown when encoding fails. </td></tr>
   </table>
   </dd>
 </dl>
@@ -360,10 +384,11 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Encode a chunk of information into the carrier image.</p>
+<p>Before encoding a chunk of information you "should" first encode its length using the EncodeChunkLength function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start encoding at. </td></tr>
-    <tr><td class="paramname">chunk</td><td>The chunk of information that will be encoded into the carrier image. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start encoding at. </td></tr>
+    <tr><td class="paramname">chunk</td><td>The chunk of information which will be encoded. </td></tr>
   </table>
   </dd>
 </dl>
@@ -403,10 +428,10 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Encode a 32bit integer stating the length of the following chunk</p>
+<p>Encode a 32bit integer stating the length of the following chunk into the carrier image.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start encoding at. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start encoding at. </td></tr>
     <tr><td class="paramname">chunk_length</td><td>The length of the next chunk in bytes. </td></tr>
   </table>
   </dd>
@@ -463,8 +488,8 @@ Additional Inherited Members</h2></td></tr>
 <p>Swap two DCT coefficients and apply a persistence value to ensure that the data survives the compression process.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">block</td><td>Pointer to the 8x8 block we are currently operating on. </td></tr>
-    <tr><td class="paramname">value</td><td>The value which is being stored, should be 0 or 1. </td></tr>
+    <tr><td class="paramname">block</td><td>A pointer to the block which is currently be operated on. </td></tr>
+    <tr><td class="paramname">value</td><td>The value which is being stored, will be 0 or 1. </td></tr>
   </table>
   </dd>
 </dl>

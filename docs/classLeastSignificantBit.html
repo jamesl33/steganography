@@ -108,6 +108,8 @@ Private Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a732c89291293a4ae619eab2203b212fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a732c89291293a4ae619eab2203b212fd">bit_depth</a></td></tr>
 <tr class="separator:a732c89291293a4ae619eab2203b212fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67821ce887e3c482fe3ca98b64b022bf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a67821ce887e3c482fe3ca98b64b022bf">image_capacity</a></td></tr>
+<tr class="separator:a67821ce887e3c482fe3ca98b64b022bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -195,7 +197,7 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Decode the payload from the carrier image by reading from one or more least significant bits. </p>
+<p>Decode the payload from the steganographic image by reading from one or more least significant bits. </p>
 
 <p>Implements <a class="el" href="classSteganography.html#aa629b72efd2ed7a08b475710522630d9">Steganography</a>.</p>
 
@@ -234,15 +236,21 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Decode a chunk of information from the carrier image.</p>
+<p>Attempt to decode a chunk of information from the steganographic image.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start decoding at. </td></tr>
-    <tr><td class="paramname">end</td><td>The pixel index to stop decoding at. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start decoding at. </td></tr>
+    <tr><td class="paramname">end</td><td>The bit index to stop decoding at. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The chunk of information read from the carrier image. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The chunk of information read from the steganographic image. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classDecodeException.html">DecodeException</a></td><td>Thrown when decoding fails. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -269,14 +277,20 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Decode a 32bit integer stating the length of the following chunk.</p>
+<p>Attempt to decode the 32bit integer stating the length of the following chunk.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start decoding at. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start decoding at. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The length of the next chunk in bytes. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The length of the following chunk. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classDecodeException.html">DecodeException</a></td><td>Thrown when decoding fails. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -303,10 +317,16 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Encode the payload into the carrier image by embedding into one or more least significant bits.</p>
+<p>Encode the payload file into the carrier image by embedding into one or more least significant bits.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">payload_path</td><td>The path to the file you are encoding. </td></tr>
+    <tr><td class="paramname">payload_path</td><td>Path to the file we are encoding. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classEncodeException.html">EncodeException</a></td><td>thrown when encoding fails. </td></tr>
   </table>
   </dd>
 </dl>
@@ -349,11 +369,11 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Encode a chunk of information into the carrier image.</p>
-<p>Before encoding a chunk of information you should first encode it's length using EncodeChunkLength function.</p>
+<p>Before encoding a chunk of information you "should" first encode its length using the EncodeChunkLength function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start encoding at. </td></tr>
-    <tr><td class="paramname">chunk</td><td>The chunk of information that will be encoded into the carrier image. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start encoding at. </td></tr>
+    <tr><td class="paramname">chunk</td><td>The chunk of information which will be encoded. </td></tr>
   </table>
   </dd>
 </dl>
@@ -393,10 +413,10 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Encode a 32bit integer stating the length of the following chunk.</p>
+<p>Encode a 32bit integer stating the length of the following chunk into the carrier image.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>The pixel index to start encoding at. </td></tr>
+    <tr><td class="paramname">start</td><td>The bit index to start encoding at. </td></tr>
     <tr><td class="paramname">chunk_length</td><td>The length of the next chunk in bytes. </td></tr>
   </table>
   </dd>
@@ -425,6 +445,29 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>The amount of least significant bits to set during the embedding process. </p>
+
+</div>
+</div>
+<a id="a67821ce887e3c482fe3ca98b64b022bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67821ce887e3c482fe3ca98b64b022bf">&#9670;&nbsp;</a></span>image_capacity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">LeastSignificantBit::image_capacity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>The total capacity of the carrier image in bits. </p>
 
 </div>
 </div>
