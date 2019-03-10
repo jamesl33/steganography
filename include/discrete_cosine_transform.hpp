@@ -39,12 +39,23 @@ class DiscreteCosineTransform : public Steganography
             this->swap_count = swap_count;
             this->persistence = persistence;
             this->image_capacity = ((this->image.rows - 8) / 8) * ((this->image.cols - 8) / 8) * this->swap_count;
+
+            // Convert the image to floating point and split the channels
+            this->image.convertTo(this->image, CV_32F);
+            cv::split(this->image, this->channels);
         }
 
         void Encode(const boost::filesystem::path &);
         void Decode();
 
     private:
+        /**
+         * @property
+         * The color channels from the carrier image, used in the embedding
+         * process.
+         */
+        std::vector<cv::Mat> channels;
+
         /**
          * @property swap_count
          * How many DCT coefficients to swap. A higher swap count allows for higher

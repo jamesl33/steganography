@@ -57,6 +57,10 @@ void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path
     boost::filesystem::path steg_image_filename = this->image_path.filename();
     steg_image_filename.replace_extension(".jpg");
 
+    // Merge the image channels and convert back to unsigned char
+    cv::merge(this->channels, this->image);
+    this->image.convertTo(this->image, CV_8U);
+
     // Write the steganographic image
     cv::imwrite("steg-" + steg_image_filename.string(), this->image, std::vector<int>{CV_IMWRITE_JPEG_QUALITY, 100});
 }
@@ -93,24 +97,16 @@ void DiscreteCosineTransform::Decode()
  */
 void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<unsigned char> &chunk)
 {
-    // Convert the carrier image from unsigned char to floating point
-    cv::Mat imagefp;
-    this->image.convertTo(imagefp, CV_32F);
-
-    // Split the image into channels
-    std::vector<cv::Mat> channels;
-    cv::split(imagefp, channels);
-
     int bits_written = 0;
 
-    for (int row = 0; row < imagefp.rows - 8; row += 8)
+    for (int row = 0; row < this->image.rows - 8; row += 8)
     {
-        for (int col = 0; col < imagefp.cols - 8; col += 8)
+        for (int col = 0; col < this->image.cols - 8; col += 8)
         {
             if (row == 0 && col == 0)
             {
-                row = start / ((imagefp.cols - 8) / 8) * 8;
-                col = start % ((imagefp.cols - 8) / 8) * 8;
+                row = start / ((this->image.cols - 8) / 8) * 8;
+                col = start % ((this->image.cols - 8) / 8) * 8;
             }
 
             // The current 8x8 block we are working on
@@ -161,12 +157,6 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
             // We have finished embedding, clean up
             if (bits_written == chunk.size() * 8)
             {
-                // Merge the channels into a single image
-                cv::Mat mergedfp;
-                cv::merge(channels, mergedfp);
-
-                // Convert the carrier image to from floating point to unsigned char
-                mergedfp.convertTo(this->image, CV_8U);
                 return;
             }
         }
@@ -182,24 +172,16 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
  */
 void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned int &chunk_length)
 {
-    // Convert the carrier image from unsigned char to floating point
-    cv::Mat imagefp;
-    this->image.convertTo(imagefp, CV_32F);
-
-    // Split the image into channels
-    std::vector<cv::Mat> channels;
-    cv::split(imagefp, channels);
-
     int bits_written = 0;
 
-    for (int row = 0; row < imagefp.rows - 8; row += 8)
+    for (int row = 0; row < this->image.rows - 8; row += 8)
     {
-        for (int col = 0; col < imagefp.cols - 8; col += 8)
+        for (int col = 0; col < this->image.cols - 8; col += 8)
         {
             if (row == 0 && col == 0)
             {
-                row = start / ((imagefp.cols - 8) / 8) * 8;
-                col = start % ((imagefp.cols - 8) / 8) * 8;
+                row = start / ((this->image.cols - 8) / 8) * 8;
+                col = start % ((this->image.cols - 8) / 8) * 8;
             }
 
             // The current 8x8 block we are working on
@@ -249,10 +231,6 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
             // We have finished embedding, clean up
             if (bits_written == 32)
             {
-                cv::Mat mergedfp;
-                cv::merge(channels, mergedfp);
-
-                mergedfp.convertTo(this->image, CV_8U);
                 return;
             }
         }
@@ -271,24 +249,16 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
 {
     std::vector<unsigned char> chunk_bytes((end - start) / 8);
 
-    // Convert the steganographic image from unsigned char to floating point
-    cv::Mat imagefp;
-    this->image.convertTo(imagefp, CV_32F);
-
-    // Split the image into channels
-    std::vector<cv::Mat> channels;
-    cv::split(imagefp, channels);
-
     int bits_read = 0;
 
-    for (int row = 0; row < imagefp.rows - 8; row += 8)
+    for (int row = 0; row < this->image.rows - 8; row += 8)
     {
-        for (int col = 0; col < imagefp.cols - 8; col += 8)
+        for (int col = 0; col < this->image.cols - 8; col += 8)
         {
             if (row == 0 && col == 0)
             {
-                row = start / ((imagefp.cols - 8) / 8) * 8;
-                col = start % ((imagefp.cols - 8) / 8) * 8;
+                row = start / ((this->image.cols - 8) / 8) * 8;
+                col = start % ((this->image.cols - 8) / 8) * 8;
             }
 
             // The current 8x8 block we are working on
@@ -333,24 +303,16 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
 {
     unsigned int chunk_length = 0;
 
-    // Convert the steganographic image from unsigned char to floating point
-    cv::Mat imagefp;
-    this->image.convertTo(imagefp, CV_32F);
-
-    // Split the image into channels
-    std::vector<cv::Mat> channels;
-    cv::split(imagefp, channels);
-
     int bits_read = 0;
 
-    for (int row = 0; row < imagefp.rows - 8; row += 8)
+    for (int row = 0; row < this->image.rows - 8; row += 8)
     {
-        for (int col = 0; col < imagefp.cols - 8; col += 8)
+        for (int col = 0; col < this->image.cols - 8; col += 8)
         {
             if (row == 0 && col == 0)
             {
-                row = start / ((imagefp.cols - 8) / 8) * 8;
-                col = start % ((imagefp.cols - 8) / 8) * 8;
+                row = start / ((this->image.cols - 8) / 8) * 8;
+                col = start % ((this->image.cols - 8) / 8) * 8;
             }
 
             // The current 8x8 block we are working on
