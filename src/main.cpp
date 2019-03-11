@@ -104,6 +104,12 @@ int main(int argc, char **argv)
             help(parser, "encode");
         }
 
+        if (!boost::filesystem::exists(arguments[1]))
+        {
+            std::cerr << "No such file or directory: \"" << arguments[1] << "\"" << std::endl;
+            exit(1);
+        }
+
         try {
             if (std::string(options.get("technique")) == "lsb")
             {
