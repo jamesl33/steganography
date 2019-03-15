@@ -28,7 +28,7 @@ TEST_CASE("Encode/Decode using the LSB technique", "[LeastSignificantBit]")
 
     for (std::string filename : files)
     {
-        for (int depth = 1; depth < 8; depth++)
+        for (int depth = 1; depth <= 8; depth++)
         {
             LeastSignificantBit encode_lsb = LeastSignificantBit("test/files/" + filename, depth);
             encode_lsb.Encode("test/files/hello_world.txt");

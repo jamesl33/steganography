@@ -25,7 +25,7 @@ TEST_CASE("Encode/Decode using the DCT technique", "[DiscreteCosineTransform]")
 
     for (std::string filename : files)
     {
-        for (int swaps = 1; swaps < 4; swaps++)
+        for (int swaps = 1; swaps <= 4; swaps++)
         {
             DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", swaps, 5);
             encode_dct.Encode("test/files/hello_world.txt");
