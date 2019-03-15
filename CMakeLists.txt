@@ -24,8 +24,9 @@ set(TEST_FILES
 add_executable(steganography src/main.cpp ${SOURCE_FILES})
 add_executable(steganography-testing test/main.cpp ${SOURCE_FILES} ${TEST_FILES})
 
+find_package (Threads)
 find_package(Boost REQUIRED filesystem)
 find_package(OpenCV REQUIRED)
 
-target_link_libraries(steganography ${Boost_LIBRARIES} ${OpenCV_LIBS})
-target_link_libraries(steganography-testing ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(steganography ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(steganography-testing ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${OpenCV_LIBS})
