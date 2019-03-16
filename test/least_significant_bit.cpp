@@ -24,53 +24,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 TEST_CASE("Encode/Decode using the LSB technique", "[LeastSignificantBit]")
 {
-    std::vector<std::string> files = {"solid_white.png", "lena.png"};
+    std::vector<unsigned char> correct_payload = {'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'};
+    std::vector<unsigned char> decoded_payload;
 
-    for (std::string filename : files)
+    for (int depth = 1; depth<= 8; depth++)
     {
-        for (int depth = 1; depth <= 8; depth++)
+        SECTION("Encode/Decode with a depth value of " + std::to_string(depth), "[Encode/Decode]")
         {
-            LeastSignificantBit encode_lsb = LeastSignificantBit("test/files/" + filename, depth);
+            LeastSignificantBit encode_lsb = LeastSignificantBit("test/files/solid_white.png", depth);
             encode_lsb.Encode("test/files/hello_world.txt");
 
-            // check to see if the steganographic image was saved with the correct filename
-            std::ifstream steg_carrier("steg-" + filename);
-            REQUIRE(steg_carrier.good());
+            std::ifstream steg_image("steg-solid_white.png");
+            REQUIRE(steg_image.good());
+            steg_image.close();
 
-            LeastSignificantBit decode_lsb = LeastSignificantBit("steg-" + filename, depth);
+            LeastSignificantBit decode_lsb = LeastSignificantBit("steg-solid_white.png", depth);
             decode_lsb.Decode();
 
-            // check to see if the payload was decoded with the correct filename
-            std::ifstream steg_payload("steg-hello_world.txt");
-            REQUIRE(steg_payload.good());
-
-            // check to if the payload was decoded correctly
-            std::vector<unsigned char> correct_payload = {'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'};
-            std::vector<unsigned char> decoded_payload;
-
-            char byte;
-
-            while (steg_payload.get(byte))
-            {
-                decoded_payload.emplace_back(byte);
-            }
-
-            REQUIRE(correct_payload == decoded_payload);
-
-            // clean up ready for the next loop
-            remove(("steg-" + filename).c_str());
-            remove("steg-hello_world.txt");
+            std::ifstream steg_file("steg-hello_world.txt");
+            REQUIRE(steg_file.good());
+            steg_file.close();
         }
     }
+
+    boost::filesystem::ifstream steg_file("steg-hello_world.txt", std::ios::binary);
+    steg_file.unsetf(std::ios::skipws); // do not skip whitespace
+    decoded_payload.reserve(boost::filesystem::file_size("steg-hello_world.txt"));
+    decoded_payload.insert(decoded_payload.begin(), std::istream_iterator<unsigned char>(steg_file), std::istream_iterator<unsigned char>());
+    steg_file.close();
+
+    REQUIRE(correct_payload == decoded_payload);
+
+    remove("steg-solid_white.png");
+    remove("steg-hello_world.txt");
 }
 
-TEST_CASE("Encode failure using the LSB technique", "[LeastSignificantBit]")
+TEST_CASE("Encode failure using the LSB technique", "[Encode]")
 {
     LeastSignificantBit encode_lsb = LeastSignificantBit("test/files/solid_white.png", 1);
     REQUIRE_THROWS_AS(encode_lsb.Encode("test/files/lorem_ipsum.txt"), EncodeException);
 }
 
-TEST_CASE("Decode failure using the LSB technique", "[LeastSignificantBit]")
+TEST_CASE("Decode failure using the LSB technique", "[Decode]")
 {
     LeastSignificantBit decode_lsb = LeastSignificantBit("test/files/solid_white.png", 1);
     REQUIRE_THROWS_AS(decode_lsb.Decode(), DecodeException);
