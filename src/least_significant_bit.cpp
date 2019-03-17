@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "least_significant_bit.hpp"
 
+const int NUM_THREADS = std::thread::hardware_concurrency();
+
 void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
 {
     // Ensure that the carrier has enough room for the payload
@@ -39,14 +41,14 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
             filename_bytes.size());
 
     // Encode the filename into the carrier image
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < (NUM_THREADS / 2); i++)
     {
         threads.emplace_back(
                 &LeastSignificantBit::EncodeChunk,
                 this,
-                32 + (((filename_bytes.size() / 4) * 8) * i),
-                filename_bytes.begin() + ((filename_bytes.size() / 4) * i),
-                filename_bytes.end() - ((filename_bytes.size() / 4) * ((4 - 1) - i)));
+                32 + (((filename_bytes.size() / (NUM_THREADS / 2)) * 8) * i),
+                filename_bytes.begin() + ((filename_bytes.size() / (NUM_THREADS / 2)) * i),
+                filename_bytes.end() - ((filename_bytes.size() / (NUM_THREADS / 2)) * (((NUM_THREADS / 2) - 1) - i)));
     }
 
     // Read the payload into a vector<unsigned char>
@@ -60,14 +62,14 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
             payload_bytes.size());
 
     // Encode the payload into the carrier image
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < NUM_THREADS; i++)
     {
         threads.emplace_back(
                 &LeastSignificantBit::EncodeChunk,
                 this,
-                64 + (filename_bytes.size() * 8) + (((payload_bytes.size() / 16) * 8) * i),
-                payload_bytes.begin() + ((payload_bytes.size() / 16) * i),
-                payload_bytes.end() - ((payload_bytes.size() / 16) * ((16 - 1) - i)));
+                64 + (filename_bytes.size() * 8) + (((payload_bytes.size() / NUM_THREADS) * 8) * i),
+                payload_bytes.begin() + ((payload_bytes.size() / NUM_THREADS) * i),
+                payload_bytes.end() - ((payload_bytes.size() / NUM_THREADS) * ((NUM_THREADS - 1) - i)));
     }
 
 
