@@ -36,16 +36,51 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
     std::string filename = payload_path.filename().string();
     std::vector<unsigned char> filename_bytes(filename.begin(), filename.end());
 
+    std::vector<std::thread> threads;
+
+    // Encode the filename length into the carrier image
+    threads.emplace_back(
+            &LeastSignificantBit::EncodeChunkLength,
+            this,
+            0,
+            filename_bytes.size());
+
     // Encode the filename into the carrier image
-    this->EncodeChunkLength(0, filename_bytes.size());
-    this->EncodeChunk(32, filename_bytes);
+    for (int i = 0; i < 4; i++)
+    {
+        threads.emplace_back(
+                &LeastSignificantBit::EncodeChunk,
+                this,
+                32 + (((filename_bytes.size() / 4) * 8) * i),
+                filename_bytes.begin() + ((filename_bytes.size() / 4) * i),
+                filename_bytes.end() - ((filename_bytes.size() / 4) * ((4 - 1) - i)));
+    }
 
     // Read the payload into a vector<unsigned char>
     std::vector<unsigned char> payload_bytes = this->ReadPayload(payload_path);
 
-    // Encode the payload into the carrier image
-    this->EncodeChunkLength(32 + filename_bytes.size() * 8, payload_bytes.size());
-    this->EncodeChunk(64 + filename_bytes.size() * 8, payload_bytes);
+    // Encode the payload length into the carrier image
+    threads.emplace_back(
+            &LeastSignificantBit::EncodeChunkLength,
+            this,
+            32 + filename_bytes.size() * 8,
+            payload_bytes.size());
+
+    for (int i = 0; i < 16; i++)
+    {
+        threads.emplace_back(
+                &LeastSignificantBit::EncodeChunk,
+                this,
+                64 + (filename_bytes.size() * 8) + (((payload_bytes.size() / 16) * 8) * i),
+                payload_bytes.begin() + ((payload_bytes.size() / 16) * i),
+                payload_bytes.end() - ((payload_bytes.size() / 16) * ((16 - 1) - i)));
+    }
+
+
+    for (std::thread &thr : threads)
+    {
+        thr.join();
+    }
 
     // Write the steganographic image
     cv::imwrite("steg-" + this->image_path.filename().replace_extension(".png").string(), this->image,
@@ -82,7 +117,7 @@ void LeastSignificantBit::Decode()
  * @param start The bit index to start encoding at.
  * @param chunk The chunk of information which will be encoded.
  */
-void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsigned char> &chunk)
+void LeastSignificantBit::EncodeChunk(const int &start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en)
 {
     int bit = 0;
 
@@ -102,9 +137,14 @@ void LeastSignificantBit::EncodeChunk(const int &start, const std::vector<unsign
                         depth = start % this->bit_depth;
                     }
 
-                    this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], depth, this->GetBit(chunk[bit / 8], bit % 8));
+                    this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], depth, this->GetBit(*it, bit % 8));
 
-                    if (++bit == chunk.size() * 8)
+                    if (++bit % 8 == 0)
+                    {
+                        it++;
+                    }
+
+                    if (it == en)
                     {
                         return;
                     }

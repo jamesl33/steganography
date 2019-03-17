@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <queue>
 #include <string>
+#include <thread>
 #include "steganography.hpp"
 #include "exceptions.hpp"
 
@@ -54,7 +55,7 @@ class LeastSignificantBit : public Steganography
          */
         int image_capacity;
 
-        void EncodeChunk(const int &, const std::vector<unsigned char> &);
+        void EncodeChunk(const int &, std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator);
         void EncodeChunkLength(const int &, const unsigned int &);
 
         std::vector<unsigned char> DecodeChunk(const int &, const int &);
