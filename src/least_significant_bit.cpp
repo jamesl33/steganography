@@ -110,28 +110,24 @@ void LeastSignificantBit::EncodeChunk(const int &start, std::vector<unsigned cha
         {
             for (int cha = 0; cha < this->image.channels(); cha++)
             {
-                for (int depth = 0; depth < this->bit_depth; depth++)
+                if (!loops_initialised)
                 {
-                    if (!loops_initialised)
-                    {
-                        row = (start / (this->image.channels() * this->bit_depth)) / this->image.cols;
-                        col = (start / (this->image.channels() * this->bit_depth)) % this->image.cols;
-                        cha = (start / this->bit_depth) % this->image.channels();
-                        depth = start % this->bit_depth;
-                        loops_initialised = true;
-                    }
+                    row = (start / this->image.channels()) / this->image.cols;
+                    col = (start / this->image.channels()) % this->image.cols;
+                    cha = start % this->image.channels();
+                    loops_initialised = true;
+                }
 
-                    this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], depth, this->GetBit(*it, bit % 8));
+                this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], 0, this->GetBit(*it, bit % 8));
 
-                    if (++bit % 8 == 0)
-                    {
-                        it++;
-                    }
+                if (++bit % 8 == 0)
+                {
+                    it++;
+                }
 
-                    if (it == en)
-                    {
-                        return;
-                    }
+                if (it == en)
+                {
+                    return;
                 }
             }
         }
@@ -149,23 +145,19 @@ void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int
         {
             for (int cha = 0; cha < this->image.channels(); cha++)
             {
-                for (int depth = 0; depth < this->bit_depth; depth++)
+                if (!loops_initialised)
                 {
-                    if (!loops_initialised)
-                    {
-                        row = (start / (this->image.channels() * this->bit_depth)) / this->image.cols;
-                        col = (start / (this->image.channels() * this->bit_depth)) % this->image.cols;
-                        cha = (start / this->bit_depth) % this->image.channels();
-                        depth = start % this->bit_depth;
-                        loops_initialised = true;
-                    }
+                    row = (start / this->image.channels()) / this->image.cols;
+                    col = (start / this->image.channels()) % this->image.cols;
+                    cha = start % this->image.channels();
+                    loops_initialised = true;
+                }
 
-                    this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], depth, this->GetBit(chunk_length, bit));
+                this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], 0, this->GetBit(chunk_length, bit));
 
-                    if (++bit == 32)
-                    {
-                        return;
-                    }
+                if (++bit == 32)
+                {
+                    return;
                 }
             }
         }
@@ -185,23 +177,19 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
         {
             for (int cha = 0; cha < this->image.channels(); cha++)
             {
-                for (int depth = 0; depth < this->bit_depth; depth++)
+                if (!loops_initialised)
                 {
-                    if (!loops_initialised)
-                    {
-                        row = (start / (this->image.channels() * this->bit_depth)) / this->image.cols;
-                        col = (start / (this->image.channels() * this->bit_depth)) % this->image.cols;
-                        cha = (start / this->bit_depth) % this->image.channels();
-                        depth = start % this->bit_depth;
-                        loops_initialised = true;
-                    }
+                    row = (start / this->image.channels()) / this->image.cols;
+                    col = (start / this->image.channels()) % this->image.cols;
+                    cha = start % this->image.channels();
+                    loops_initialised = true;
+                }
 
-                    this->SetBit(&chunk[bit / 8], bit % 8, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], depth));
+                this->SetBit(&chunk[bit / 8], bit % 8, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], 0));
 
-                    if (++bit == end - start)
-                    {
-                        return chunk;
-                    }
+                if (++bit == end - start)
+                {
+                    return chunk;
                 }
             }
         }
@@ -223,28 +211,24 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
         {
             for (int cha = 0; cha < this->image.channels(); cha++)
             {
-                for (int depth = 0; depth < this->bit_depth; depth++)
+                if (!loops_initialised)
                 {
-                    if (!loops_initialised)
+                    row = (start / this->image.channels()) / this->image.cols;
+                    col = (start / this->image.channels()) % this->image.cols;
+                    cha = start % this->image.channels();
+                    loops_initialised = true;
+                }
+
+                this->SetBit(&chunk_length, bit, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], 0));
+
+                if (++bit == 32)
+                {
+                    if (chunk_length == 0 || chunk_length > this->image_capacity)
                     {
-                        row = (start / (this->image.channels() * this->bit_depth)) / this->image.cols;
-                        col = (start / (this->image.channels() * this->bit_depth)) % this->image.cols;
-                        cha = (start / this->bit_depth) % this->image.channels();
-                        depth = start % this->bit_depth;
-                        loops_initialised = true;
+                        throw DecodeException("Error: Failed to decode payload length");
                     }
 
-                    this->SetBit(&chunk_length, bit, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], depth));
-
-                    if (++bit == 32)
-                    {
-                        if (chunk_length == 0 || chunk_length > this->image_capacity)
-                        {
-                            throw DecodeException("Error: Failed to decode payload length");
-                        }
-
-                        return chunk_length;
-                    }
+                    return chunk_length;
                 }
             }
         }

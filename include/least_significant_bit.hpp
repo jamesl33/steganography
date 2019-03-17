@@ -31,12 +31,10 @@ class LeastSignificantBit : public Steganography
          * Default constructor for LeastSignificantBit class overrides the default
          * constructor for the Steganography class.
          * @param image_path The path to the input carrier image.
-         * @param bit_depth The amount of significant bits to set during the embedding process.
          */
-        LeastSignificantBit(const boost::filesystem::path &image_path, int bit_depth) : Steganography(image_path)
+        LeastSignificantBit(const boost::filesystem::path &image_path) : Steganography(image_path)
         {
-            this->bit_depth = bit_depth;
-            this->image_capacity = (this->image.rows * this->image.cols * this->image.channels()) * this -> bit_depth;
+            this->image_capacity = (this->image.rows * this->image.cols * this->image.channels()) - 64;
         }
 
         /**
@@ -55,12 +53,6 @@ class LeastSignificantBit : public Steganography
         void Decode();
 
     private:
-        /**
-         * @property bit_depth
-         * The amount of least significant bits to set during the embedding process.
-         */
-        int bit_depth;
-
         /**
          * @property image_capacity
          * The total capacity of the carrier image in bits.

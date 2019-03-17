@@ -51,11 +51,6 @@ int main(int argc, char **argv)
             "\tdecode (de) - Decode a file from a carrier image\n\n"
             "Use \"%prog help <command>\" for help on a specific command");
 
-    parser.add_option("-d", "--depth")
-        .help("encode/decode depth, excepts values between '1' and '8'")
-        .type("int")
-        .set_default(1);
-
     parser.add_option("-s", "--swap-count")
         .help("dct swap count, higher values allow for more storage but cause more distortion, excepts values between '1' and '4'")
         .type("int")
@@ -78,12 +73,6 @@ int main(int argc, char **argv)
     {
         std::cout << parser.format_help();
         exit(0);
-    }
-
-    if (int(options.get("depth")) < 1 || int(options.get("depth")) > 8)
-    {
-        std::cerr << "Error: Invalid depth value" << std::endl;
-        exit(1);
     }
 
     if (arguments[0] == "help")
@@ -113,7 +102,7 @@ int main(int argc, char **argv)
         try {
             if (std::string(options.get("technique")) == "lsb")
             {
-                LeastSignificantBit lsb = LeastSignificantBit(arguments[2], options.get("depth"));
+                LeastSignificantBit lsb = LeastSignificantBit(arguments[2]);
                 lsb.Encode(arguments[1]);
             }
             else if (std::string(options.get("technique")) == "dct")
@@ -143,7 +132,7 @@ int main(int argc, char **argv)
         try {
             if (std::string(options.get("technique")) == "lsb")
             {
-                LeastSignificantBit lsb = LeastSignificantBit(arguments[1], options.get("depth"));
+                LeastSignificantBit lsb = LeastSignificantBit(arguments[1]);
                 lsb.Decode();
             }
             else if (std::string(options.get("technique")) == "dct")
