@@ -238,7 +238,7 @@ unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
 
                     if (++bit == 32)
                     {
-                        if (chunk_length > this->image_capacity)
+                        if (chunk_length == 0 || chunk_length > this->image_capacity)
                         {
                             throw DecodeException("Error: Failed to decode payload length");
                         }
