@@ -78,7 +78,20 @@ class Steganography
          */
         cv::Mat image;
 
+        /**
+         * Read all the bytes from a payload file into a vector.
+         *
+         * @param payload_path The path to the file to read as the payload.
+         * @return A vector containing all the bytes from the payload file.
+         */
         std::vector<unsigned char> ReadPayload(const boost::filesystem::path &);
+
+        /**
+         * Write all the bytes decoded from the carrier image to a file.
+         *
+         * @param payload_path The path to the file that will be created.
+         * @param payload The payload decoded from the carrier image.
+         */
         void WritePayload(const boost::filesystem::path &, const std::vector<unsigned char> &);
 
         /**

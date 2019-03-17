@@ -17,12 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "steganography.hpp"
 
-/**
- * Read all the bytes from a payload file into a vector.
- *
- * @param payload_path The path to the file to read as the payload.
- * @return A vector containing all the bytes from the payload file.
- */
 std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::path &payload_path)
 {
     boost::filesystem::ifstream file(payload_path, std::ios::binary);
@@ -36,12 +30,6 @@ std::vector<unsigned char> Steganography::ReadPayload(const boost::filesystem::p
     return payload;
 }
 
-/**
- * Write all the bytes decoded from the carrier image to a file.
- *
- * @param payload_path The path to the file that will be created.
- * @param payload The payload decoded from the carrier image.
- */
 void Steganography::WritePayload(const boost::filesystem::path &payload_path, const std::vector<unsigned char> &payload)
 {
     boost::filesystem::ofstream file(payload_path, std::ios::binary);

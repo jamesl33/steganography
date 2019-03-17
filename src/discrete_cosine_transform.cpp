@@ -25,12 +25,6 @@ const std::vector<std::tuple<std::tuple<int, int>, std::tuple<int, int>>> coeffi
                                                                                           {{0, 3}, {3, 0}},
                                                                                           {{1, 3}, {3, 1}}};
 
-/**
- * Encode the payload file into the carrier image by swapping DCT coefficients.
- *
- * @param payload_path Path to the file we are encoding.
- * @exception EncodeException thrown when encoding fails.
- */
 void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path)
 {
     // Ensure that the carrier has enough room for the payload
@@ -65,10 +59,6 @@ void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path
     cv::imwrite("steg-" + steg_image_filename.string(), this->image, std::vector<int>{CV_IMWRITE_JPEG_QUALITY, 100});
 }
 
-/**
- * Decode the payload from the steganographic image by comparing DCT
- * coefficients.
- */
 void DiscreteCosineTransform::Decode()
 {
     // Decode the filename from the steganographic image
@@ -86,15 +76,6 @@ void DiscreteCosineTransform::Decode()
     this->WritePayload("steg-" + payload_filename, payload_bytes);
 }
 
-/**
- * Encode a chunk of information into the carrier image.
- *
- * Before encoding a chunk of information you "should" first encode its length
- * using the EncodeChunkLength function.
- *
- * @param start The bit index to start encoding at.
- * @param chunk The chunk of information which will be encoded.
- */
 void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<unsigned char> &chunk)
 {
     int bits_written = 0;
@@ -163,13 +144,6 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
     }
 }
 
-/**
- * Encode a 32bit integer stating the length of the following chunk into the
- * carrier image.
- *
- * @param start The bit index to start encoding at.
- * @param chunk_length The length of the next chunk in bytes.
- */
 void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned int &chunk_length)
 {
     int bits_written = 0;
@@ -237,14 +211,6 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
     }
 }
 
-/**
- * Attempt to decode a chunk of information from the steganographic image.
- *
- * @param start The bit index to start decoding at.
- * @param end The bit index to stop decoding at.
- * @return The chunk of information read from the steganographic image.
- * @exception DecodeException Thrown when decoding fails.
- */
 std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start, const int &end)
 {
     std::vector<unsigned char> chunk_bytes((end - start) / 8);
@@ -291,14 +257,6 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
     throw DecodeException("Error: Failed to decode payload");
 }
 
-/**
- * Attempt to decode the 32bit integer stating the length of the following
- * chunk.
- *
- * @param start The bit index to start decoding at.
- * @return The length of the following chunk.
- * @exception DecodeException Thrown when decoding fails.
- */
 unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
 {
     unsigned int chunk_length = 0;
@@ -350,15 +308,6 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
     throw DecodeException("Error: Failed to decode payload length");
 }
 
-/**
- * Swap two DCT coefficients.
- *
- * Swap two DCT coefficients and apply a persistence value to ensure that the
- * data survives the compression process.
- *
- * @param block A pointer to the block which is currently be operated on.
- * @param value The value which is being stored, will be 0 or 1.
- */
 void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value, const std::tuple<int, int> &a, const std::tuple<int, int> &b)
 {
     // Read two coefficients from the image block

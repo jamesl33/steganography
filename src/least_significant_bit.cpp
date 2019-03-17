@@ -17,13 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "least_significant_bit.hpp"
 
-/**
- * Encode the payload file into the carrier image by embedding into one or more
- * least significant bits.
- *
- * @param payload_path Path to the file we are encoding.
- * @exception EncodeException thrown when encoding fails.
- */
 void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
 {
     // Ensure that the carrier has enough room for the payload
@@ -66,6 +59,7 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
             32 + filename_bytes.size() * 8,
             payload_bytes.size());
 
+    // Encode the payload into the carrier image
     for (int i = 0; i < 16; i++)
     {
         threads.emplace_back(
@@ -77,6 +71,7 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
     }
 
 
+    // Wait for all the threads to finish encoding
     for (std::thread &thr : threads)
     {
         thr.join();
@@ -87,10 +82,6 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
             std::vector<int>{cv::IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY, 1});
 }
 
-/**
- * Decode the payload from the steganographic image by reading from one or more
- * least significant bits.
- */
 void LeastSignificantBit::Decode()
 {
     // Decode the filename from the steganographic image
@@ -108,15 +99,6 @@ void LeastSignificantBit::Decode()
     this->WritePayload("steg-" + payload_filename, payload_bytes);
 }
 
-/**
- * Encode a chunk of information into the carrier image.
- *
- * Before encoding a chunk of information you "should" first encode its length
- * using the EncodeChunkLength function.
- *
- * @param start The bit index to start encoding at.
- * @param chunk The chunk of information which will be encoded.
- */
 void LeastSignificantBit::EncodeChunk(const int &start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en)
 {
     int bit = 0;
@@ -154,13 +136,6 @@ void LeastSignificantBit::EncodeChunk(const int &start, std::vector<unsigned cha
     }
 }
 
-/**
- * Encode a 32bit integer stating the length of the following chunk into the
- * carrier image.
- *
- * @param start The bit index to start encoding at.
- * @param chunk_length The length of the next chunk in bytes.
- */
 void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int &chunk_length)
 {
     int bit = 0;
@@ -193,14 +168,6 @@ void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int
     }
 }
 
-/**
- * Attempt to decode a chunk of information from the steganographic image.
- *
- * @param start The bit index to start decoding at.
- * @param end The bit index to stop decoding at.
- * @return The chunk of information read from the steganographic image.
- * @exception DecodeException Thrown when decoding fails.
- */
 std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, const int &end)
 {
     std::vector<unsigned char> chunk((end - start) / 8);
@@ -237,14 +204,6 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
     throw DecodeException("Error: Failed to decode payload");
 }
 
-/**
- * Attempt to decode the 32bit integer stating the length of the following
- * chunk.
- *
- * @param start The bit index to start decoding at.
- * @return The length of the following chunk.
- * @exception DecodeException Thrown when decoding fails.
- */
 unsigned int LeastSignificantBit::DecodeChunkLength(const int &start)
 {
     unsigned int chunk_length = 0;

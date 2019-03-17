@@ -46,7 +46,18 @@ class DiscreteCosineTransform : public Steganography
             cv::split(this->image, this->channels);
         }
 
+        /**
+         * Encode the payload file into the carrier image by swapping DCT coefficients.
+         *
+         * @param payload_path Path to the file we are encoding.
+         * @exception EncodeException thrown when encoding fails.
+         */
         void Encode(const boost::filesystem::path &);
+
+        /**
+         * Decode the payload from the steganographic image by comparing DCT
+         * coefficients.
+         */
         void Decode();
 
     private:
@@ -78,12 +89,55 @@ class DiscreteCosineTransform : public Steganography
          */
         int image_capacity;
 
+        /**
+         * Encode a chunk of information into the carrier image.
+         *
+         * Before encoding a chunk of information you "should" first encode its length
+         * using the EncodeChunkLength function.
+         *
+         * @param start The bit index to start encoding at.
+         * @param chunk The chunk of information which will be encoded.
+         */
         void EncodeChunk(const int &, const std::vector<unsigned char> &);
+
+        /**
+         * Encode a 32bit integer stating the length of the following chunk into the
+         * carrier image.
+         *
+         * @param start The bit index to start encoding at.
+         * @param chunk_length The length of the next chunk in bytes.
+         */
         void EncodeChunkLength(const int &, const unsigned int &);
 
+        /**
+         * Attempt to decode a chunk of information from the steganographic image.
+         *
+         * @param start The bit index to start decoding at.
+         * @param end The bit index to stop decoding at.
+         * @return The chunk of information read from the steganographic image.
+         * @exception DecodeException Thrown when decoding fails.
+         */
         std::vector<unsigned char> DecodeChunk(const int &, const int &);
+
+        /**
+         * Attempt to decode the 32bit integer stating the length of the following
+         * chunk.
+         *
+         * @param start The bit index to start decoding at.
+         * @return The length of the following chunk.
+         * @exception DecodeException Thrown when decoding fails.
+         */
         unsigned int DecodeChunkLength(const int &);
 
+        /**
+         * Swap two DCT coefficients.
+         *
+         * Swap two DCT coefficients and apply a persistence value to ensure that the
+         * data survives the compression process.
+         *
+         * @param block A pointer to the block which is currently be operated on.
+         * @param value The value which is being stored, will be 0 or 1.
+         */
         void SwapCoefficients(cv::Mat *, const int &, const std::tuple<int, int> &, const std::tuple<int, int> &);
 };
 

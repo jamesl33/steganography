@@ -39,7 +39,19 @@ class LeastSignificantBit : public Steganography
             this->image_capacity = (this->image.rows * this->image.cols * this->image.channels()) * this -> bit_depth;
         }
 
+        /**
+         * Encode the payload file into the carrier image by embedding into one or more
+         * least significant bits.
+         *
+         * @param payload_path Path to the file we are encoding.
+         * @exception EncodeException thrown when encoding fails.
+         */
         void Encode(const boost::filesystem::path &);
+
+        /**
+         * Decode the payload from the steganographic image by reading from one or more
+         * least significant bits.
+         */
         void Decode();
 
     private:
@@ -55,10 +67,45 @@ class LeastSignificantBit : public Steganography
          */
         int image_capacity;
 
+        /**
+         * Encode a chunk of information into the carrier image.
+         *
+         * Before encoding a chunk of information you "should" first encode its length
+         * using the EncodeChunkLength function.
+         *
+         * @param start The bit index to start encoding at.
+         * @param it The position in the chunk of information to start encoding.
+         * @param en The position in the chunk of information to stop encoding.
+         */
         void EncodeChunk(const int &, std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator);
+
+        /**
+         * Encode a 32bit integer stating the length of the following chunk into the
+         * carrier image.
+         *
+         * @param start The bit index to start encoding at.
+         * @param chunk_length The length of the next chunk in bytes.
+         */
         void EncodeChunkLength(const int &, const unsigned int &);
 
+        /**
+         * Attempt to decode a chunk of information from the steganographic image.
+         *
+         * @param start The bit index to start decoding at.
+         * @param end The bit index to stop decoding at.
+         * @return The chunk of information read from the steganographic image.
+         * @exception DecodeException Thrown when decoding fails.
+         */
         std::vector<unsigned char> DecodeChunk(const int &, const int &);
+
+        /**
+         * Attempt to decode the 32bit integer stating the length of the following
+         * chunk.
+         *
+         * @param start The bit index to start decoding at.
+         * @return The length of the following chunk.
+         * @exception DecodeException Thrown when decoding fails.
+         */
         unsigned int DecodeChunkLength(const int &);
 };
 
