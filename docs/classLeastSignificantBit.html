@@ -95,8 +95,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a0996e54abc8d28a88733bcc4648d6405"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a0996e54abc8d28a88733bcc4648d6405">EncodeChunk</a> (const int &amp;, const std::vector&lt; unsigned char &gt; &amp;)</td></tr>
-<tr class="separator:a0996e54abc8d28a88733bcc4648d6405"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bb8403901c417ce9211a984d901d873"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a1bb8403901c417ce9211a984d901d873">EncodeChunk</a> (const int &amp;, std::vector&lt; unsigned char &gt;::iterator, std::vector&lt; unsigned char &gt;::iterator)</td></tr>
+<tr class="separator:a1bb8403901c417ce9211a984d901d873"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4af02a7014cb8be5c3cbc6a4a4f5b278"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a4af02a7014cb8be5c3cbc6a4a4f5b278">EncodeChunkLength</a> (const int &amp;, const unsigned int &amp;)</td></tr>
 <tr class="separator:a4af02a7014cb8be5c3cbc6a4a4f5b278"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99e3d6e9e97eda981b9a43b2df0681b8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a99e3d6e9e97eda981b9a43b2df0681b8">DecodeChunk</a> (const int &amp;, const int &amp;)</td></tr>
@@ -335,8 +335,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a0996e54abc8d28a88733bcc4648d6405"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0996e54abc8d28a88733bcc4648d6405">&#9670;&nbsp;</a></span>EncodeChunk()</h2>
+<a id="a1bb8403901c417ce9211a984d901d873"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bb8403901c417ce9211a984d901d873">&#9670;&nbsp;</a></span>EncodeChunk()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -353,8 +353,14 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned char &gt; &amp;&#160;</td>
-          <td class="paramname"><em>chunk</em>&#160;</td>
+          <td class="paramtype">std::vector&lt; unsigned char &gt;::iterator&#160;</td>
+          <td class="paramname"><em>it</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; unsigned char &gt;::iterator&#160;</td>
+          <td class="paramname"><em>en</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -373,7 +379,8 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">start</td><td>The bit index to start encoding at. </td></tr>
-    <tr><td class="paramname">chunk</td><td>The chunk of information which will be encoded. </td></tr>
+    <tr><td class="paramname">it</td><td>The position in the chunk of information to start encoding. </td></tr>
+    <tr><td class="paramname">en</td><td>The position in the chunk of information to stop encoding. </td></tr>
   </table>
   </dd>
 </dl>
