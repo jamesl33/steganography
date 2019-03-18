@@ -122,12 +122,7 @@ void LeastSignificantBit::EncodeChunk(const int &start, std::vector<unsigned cha
 
                 this->SetBit(&this->image.at<cv::Vec3b>(row, col)[cha], 0, this->GetBit(*it, bit % 8));
 
-                if (++bit % 8 == 0)
-                {
-                    it++;
-                }
-
-                if (it == en)
+                if (++bit % 8 == 0 && ++it == en)
                 {
                     return;
                 }
