@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+# ensure that cmake has been configured
+if [[ ! -e "build" ]] || [[ ! -e "bin" ]]; then
+    cmake -B build -G Ninja
+fi
+
+# ensure the latest changes are compiled
+cmake --build build --target steganography-testing
+
+# run the unit testing
+./bin/steganography-testing
