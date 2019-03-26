@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <iostream>
 #include <string>
+#include <thread>
 #include <tuple>
 #include <vector>
 #include <boost/filesystem.hpp>
@@ -36,14 +37,12 @@ class DiscreteCosineTransform : public Steganography
          * Default constructor for the DiscreteCosineTransform class which overrides
          * the default constructor from the Steganography class.
          * @param image_path The path to the input carrier image.
-         * @param swap_count The amount of DCT coefficients to swap.
          * @param persistence The persistence value for this instance.
          */
-        explicit DiscreteCosineTransform(const boost::filesystem::path &image_path, int swap_count, int persistence) : Steganography(image_path)
+        explicit DiscreteCosineTransform(const boost::filesystem::path &image_path, int persistence) : Steganography(image_path)
         {
-            this->swap_count = swap_count;
             this->persistence = persistence;
-            this->image_capacity = ((this->image.rows - 8) / 8) * ((this->image.cols - 8) / 8) * this->swap_count;
+            this->image_capacity = ((this->image.rows - 8) / 8) * ((this->image.cols - 8) / 8);
 
             // Convert the image to floating point and split the channels
             this->image.convertTo(this->image, CV_32F);
@@ -73,13 +72,6 @@ class DiscreteCosineTransform : public Steganography
         std::vector<cv::Mat> channels;
 
         /**
-         * @property swap_count
-         * How many DCT coefficients to swap. A higher swap count allows for higher
-         * storage capacity, however, will cause more visual degradation.
-         */
-        int swap_count;
-
-        /**
          * @property persistence
          * Value which will be applied during the DCT coefficient swapping. Higher
          * values ensure that the data persists, however, cause more visual
@@ -100,9 +92,10 @@ class DiscreteCosineTransform : public Steganography
          * using the EncodeChunkLength function.
          *
          * @param start The bit index to start encoding at.
-         * @param chunk The chunk of information which will be encoded.
+         * @param it The position in the chunk of information to start encoding.
+         * @param en The position in the chunk of information to stop encoding.
          */
-        void EncodeChunk(const int &, const std::vector<unsigned char> &);
+        void EncodeChunk(const int &, std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator);
 
         /**
          * Encode a 32bit integer stating the length of the following chunk into the
@@ -142,7 +135,7 @@ class DiscreteCosineTransform : public Steganography
          * @param block A pointer to the block which is currently be operated on.
          * @param value The value which is being stored, will be 0 or 1.
          */
-        void SwapCoefficients(cv::Mat *, const int &, const std::tuple<int, int> &, const std::tuple<int, int> &);
+        void SwapCoefficients(cv::Mat *, const int &);
 };
 
 #endif // DISCRETE_COSINE_TRANSFORM_HPP

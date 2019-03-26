@@ -24,31 +24,25 @@ TEST_CASE("Encode/Decode using the DCT technique", "[DiscreteCosineTransform]")
     std::vector<unsigned char> correct_payload = {'H', 'e', 'l', 'l', 'o', ',', ' ', 'W', 'o', 'r', 'l', 'd', '!', '\n'};
     std::vector<unsigned char> decoded_payload;
 
-    for (int swaps = 1; swaps<= 4; swaps++)
-    {
-        SECTION("Encode/Decode with a swaps value of " + std::to_string(swaps), "[Encode/Decode]")
-        {
-            DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", swaps, 10);
-            encode_dct.Encode("test/files/hello_world.txt");
+    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 10);
+    encode_dct.Encode("test/files/hello_world.txt");
 
-            std::ifstream steg_image("steg-solid_white.jpg");
-            REQUIRE(steg_image.good());
-            steg_image.close();
+    std::ifstream steg_image("steg-solid_white.jpg");
+    REQUIRE(steg_image.good());
+    steg_image.close();
 
-            DiscreteCosineTransform decode_dct = DiscreteCosineTransform("steg-solid_white.jpg", swaps, 10);
-            decode_dct.Decode();
+    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("steg-solid_white.jpg", 10);
+    decode_dct.Decode();
 
-            std::ifstream steg_file("steg-hello_world.txt");
-            REQUIRE(steg_file.good());
-            steg_file.close();
-        }
-    }
-
-    boost::filesystem::ifstream steg_file("steg-hello_world.txt", std::ios::binary);
-    steg_file.unsetf(std::ios::skipws);
-    decoded_payload.reserve(boost::filesystem::file_size("steg-hello_world.txt"));
-    decoded_payload.insert(decoded_payload.begin(), std::istream_iterator<unsigned char>(steg_file), std::istream_iterator<unsigned char>());
+    std::ifstream steg_file("steg-hello_world.txt");
+    REQUIRE(steg_file.good());
     steg_file.close();
+
+    boost::filesystem::ifstream check_file("steg-hello_world.txt", std::ios::binary);
+    check_file.unsetf(std::ios::skipws);
+    decoded_payload.reserve(boost::filesystem::file_size("steg-hello_world.txt"));
+    decoded_payload.insert(decoded_payload.begin(), std::istream_iterator<unsigned char>(check_file), std::istream_iterator<unsigned char>());
+    check_file.close();
 
     REQUIRE(correct_payload == decoded_payload);
 
@@ -58,12 +52,12 @@ TEST_CASE("Encode/Decode using the DCT technique", "[DiscreteCosineTransform]")
 
 TEST_CASE("Encode failure using the DCT technique", "[DiscreteCosineTransform]")
 {
-    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1, 1);
+    DiscreteCosineTransform encode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1);
     REQUIRE_THROWS_AS(encode_dct.Encode("test/files/lorem_ipsum.txt"), EncodeException);
 }
 
 TEST_CASE("Decode failure using the DCT technique", "[DiscreteCosineTransform]")
 {
-    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1, 1);
+    DiscreteCosineTransform decode_dct = DiscreteCosineTransform("test/files/solid_white.png", 1);
     REQUIRE_THROWS_AS(decode_dct.Decode(), DecodeException);
 }
