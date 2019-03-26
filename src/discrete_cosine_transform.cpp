@@ -17,14 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "discrete_cosine_transform.hpp"
 
-/**
- * The available DCT coefficient swap pairs.
- */
-const std::vector<std::tuple<std::tuple<int, int>, std::tuple<int, int>>> coefficients = {{{0, 2}, {2, 0}},
-                                                                                          {{1, 2}, {2, 1}},
-                                                                                          {{0, 3}, {3, 0}},
-                                                                                          {{1, 3}, {3, 1}}};
-
 void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path)
 {
     // Ensure that the carrier has enough room for the payload
@@ -108,20 +100,8 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
             // Perform the forward dct
             cv::dct(block, trans);
 
-            // Swap N DCT coefficients
-            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
-            {
-                std::tuple<int, int> a = std::get<0>(coefficients[i]);
-                std::tuple<int, int> b = std::get<1>(coefficients[i]);
-
-                // Embed the current chunk bit in the carrier
-                this->SwapCoefficients(&trans, this->GetBit(chunk[bits_written / 8], bits_written % 8), a, b);
-
-                if (++bits_written == chunk.size() * 8)
-                {
-                    break;
-                }
-            }
+            // Embed the current chunk bit in the carrier
+            this->SwapCoefficients(&trans, this->GetBit(chunk[bits_written / 8], bits_written % 8));
 
             // Perform the inverse dct
             cv::idct(trans, block);
@@ -136,7 +116,7 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
             }
 
             // We have finished embedding, clean up
-            if (bits_written == chunk.size() * 8)
+            if (++bits_written == chunk.size() * 8)
             {
                 return;
             }
@@ -177,18 +157,7 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
             cv::dct(block, trans);
 
             // Swap N DCT coefficients
-            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
-            {
-                std::tuple<int, int> a = std::get<0>(coefficients[i]);
-                std::tuple<int, int> b = std::get<1>(coefficients[i]);
-
-                this->SwapCoefficients(&trans, this->GetBit(chunk_length, bits_written), a, b);
-
-                if (++bits_written == 32)
-                {
-                    break;
-                }
-            }
+            this->SwapCoefficients(&trans, this->GetBit(chunk_length, bits_written));
 
             // Perform the inverse dct
             cv::idct(trans, block);
@@ -203,7 +172,7 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
             }
 
             // We have finished embedding, clean up
-            if (bits_written == 32)
+            if (++bits_written == 32)
             {
                 return;
             }
@@ -237,19 +206,12 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
             cv::dct(block, trans);
 
             // Read from N swapped DCT coefficients
-            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
+            this->SetBit(&chunk_bytes[bits_read / 8], bits_read % 8, (trans.at<float>(0, 2) < trans.at<float>(2, 0)));
+
+            if (++bits_read == end - start)
             {
-                std::tuple<int, int> a = std::get<0>(coefficients[i]);
-                std::tuple<int, int> b = std::get<1>(coefficients[i]);
-
-                this->SetBit(&chunk_bytes[bits_read / 8], bits_read % 8,
-                        (trans.at<float>(std::get<0>(a), std::get<1>(a)) < trans.at<float>(std::get<0>(b), std::get<1>(b))));
-
-                if (++bits_read == end - start)
-                {
-                    // We have finished decoding, return the chunk
-                    return chunk_bytes;
-                }
+                // We have finished decoding, return the chunk
+                return chunk_bytes;
             }
         }
     }
@@ -283,24 +245,17 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
             cv::dct(block, trans);
 
             // Read from N swapped DCT coefficients
-            for (int i = 0; i < this->swap_count && i < coefficients.size(); i++)
+            this->SetBit(&chunk_length, bits_read, (trans.at<float>(0, 2) < trans.at<float>(2, 0)));
+
+            if (++bits_read == 32)
             {
-                std::tuple<int, int> a = std::get<0>(coefficients[i]);
-                std::tuple<int, int> b = std::get<1>(coefficients[i]);
-
-                this->SetBit(&chunk_length, bits_read,
-                        (trans.at<float>(std::get<0>(a), std::get<1>(a)) < trans.at<float>(std::get<0>(b), std::get<1>(b))));
-
-                if (++bits_read == 32)
+                // We have decoded the integer, check if it's valid
+                if (chunk_length >= this->image_capacity || chunk_length == 0)
                 {
-                    // We have decoded the integer, check if it's valid
-                    if (chunk_length >= this->image_capacity || chunk_length == 0)
-                    {
-                        throw DecodeException("Error: Failed to decode payload length");
-                    }
-
-                    return chunk_length;
+                    throw DecodeException("Error: Failed to decode payload length");
                 }
+
+                return chunk_length;
             }
         }
     }
@@ -308,11 +263,11 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
     throw DecodeException("Error: Failed to decode payload length");
 }
 
-void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value, const std::tuple<int, int> &a, const std::tuple<int, int> &b)
+void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value)
 {
     // Read two coefficients from the image block
-    float low = block->at<float>(std::get<0>(a), std::get<1>(a));
-    float high = block->at<float>(std::get<0>(b), std::get<1>(b));
+    float low = block->at<float>(0, 2);
+    float high = block->at<float>(2, 0);
 
     // Swap the coefficients so that low is low and high is high
     if (value && (low > high))
@@ -337,6 +292,6 @@ void DiscreteCosineTransform::SwapCoefficients(cv::Mat *block, const int &value,
     }
 
     // Write the coefficients back to the block
-    block->at<float>(std::get<0>(a), std::get<1>(a)) = low;
-    block->at<float>(std::get<0>(b), std::get<1>(b)) = high;
+    block->at<float>(0, 2) = low;
+    block->at<float>(2, 0) = high;
 }
