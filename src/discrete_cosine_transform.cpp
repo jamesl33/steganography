@@ -64,16 +64,13 @@ void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path
         }
     }
 
-    // Encode the payload into the carrier image
-    boost::filesystem::path steg_image_filename = this->image_path.filename();
-    steg_image_filename.replace_extension(".jpg");
-
     // Merge the image channels and convert back to unsigned char
     cv::merge(this->channels, this->image);
     this->image.convertTo(this->image, CV_8U);
 
     // Write the steganographic image
-    cv::imwrite("steg-" + steg_image_filename.string(), this->image, std::vector<int>{CV_IMWRITE_JPEG_QUALITY, 100});
+    cv::imwrite("steg-" + this->image_path.filename().replace_extension(".jpg").string(), this->image,
+            std::vector<int>{CV_IMWRITE_JPEG_QUALITY, 100});
 }
 
 void DiscreteCosineTransform::Decode()
