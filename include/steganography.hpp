@@ -53,8 +53,10 @@ class Steganography
          * Function that must be overridden by the subclass which encodes a payload
          * into the carrier image using the steganographic technique defined in the
          * subclass.
+         * @param payload_path Path to the file we are encoding.
+         * @exception EncodeException Thrown when encoding fails.
          */
-        virtual void Encode(const boost::filesystem::path &) = 0;
+        virtual void Encode(const boost::filesystem::path & payload_path) = 0;
 
         /**
          * @pure Decode
@@ -84,7 +86,7 @@ class Steganography
          * @param payload_path The path to the file to read as the payload.
          * @return A vector containing all the bytes from the payload file.
          */
-        std::vector<unsigned char> ReadPayload(const boost::filesystem::path &);
+        std::vector<unsigned char> ReadPayload(const boost::filesystem::path & payload_path);
 
         /**
          * Write all the bytes decoded from the carrier image to a file.
@@ -92,7 +94,7 @@ class Steganography
          * @param payload_path The path to the file that will be created.
          * @param payload The payload decoded from the carrier image.
          */
-        void WritePayload(const boost::filesystem::path &, const std::vector<unsigned char> &);
+        void WritePayload(const boost::filesystem::path &payload_path, const std::vector<unsigned char> &payload);
 
         /**
          * Set the n'th significant bit of a generic type.

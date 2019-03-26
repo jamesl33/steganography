@@ -46,7 +46,7 @@ class LeastSignificantBit : public Steganography
          * least significant bits.
          *
          * @param payload_path Path to the file we are encoding.
-         * @exception EncodeException thrown when encoding fails.
+         * @exception EncodeException Thrown when encoding fails.
          */
         void Encode(const boost::filesystem::path &);
 
@@ -73,7 +73,7 @@ class LeastSignificantBit : public Steganography
          * @param it The position in the chunk of information to start encoding.
          * @param en The position in the chunk of information to stop encoding.
          */
-        void EncodeChunk(const int &, std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator);
+        void EncodeChunk(const int &start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en);
 
         /**
          * Encode a 32bit integer stating the length of the following chunk into the
@@ -82,7 +82,7 @@ class LeastSignificantBit : public Steganography
          * @param start The bit index to start encoding at.
          * @param chunk_length The length of the next chunk in bytes.
          */
-        void EncodeChunkLength(const int &, const unsigned int &);
+        void EncodeChunkLength(const int &start, const unsigned int &chunk);
 
         /**
          * Attempt to decode a chunk of information from the steganographic image.
@@ -92,7 +92,7 @@ class LeastSignificantBit : public Steganography
          * @return The chunk of information read from the steganographic image.
          * @exception DecodeException Thrown when decoding fails.
          */
-        std::vector<unsigned char> DecodeChunk(const int &, const int &);
+        std::vector<unsigned char> DecodeChunk(const int &start, const int &end);
 
         /**
          * Attempt to decode the 32bit integer stating the length of the following
@@ -102,7 +102,7 @@ class LeastSignificantBit : public Steganography
          * @return The length of the following chunk.
          * @exception DecodeException Thrown when decoding fails.
          */
-        unsigned int DecodeChunkLength(const int &);
+        unsigned int DecodeChunkLength(const int &start);
 };
 
 #endif // LEAST_SIGNIFICANT_BIT_HPP

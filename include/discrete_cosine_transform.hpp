@@ -53,9 +53,9 @@ class DiscreteCosineTransform : public Steganography
          * Encode the payload file into the carrier image by swapping DCT coefficients.
          *
          * @param payload_path Path to the file we are encoding.
-         * @exception EncodeException thrown when encoding fails.
+         * @exception EncodeException Thrown when encoding fails.
          */
-        void Encode(const boost::filesystem::path &);
+        void Encode(const boost::filesystem::path &payload_path);
 
         /**
          * Decode the payload from the steganographic image by comparing DCT
@@ -95,7 +95,7 @@ class DiscreteCosineTransform : public Steganography
          * @param it The position in the chunk of information to start encoding.
          * @param en The position in the chunk of information to stop encoding.
          */
-        void EncodeChunk(const int &, std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator);
+        void EncodeChunk(const int &start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en);
 
         /**
          * Encode a 32bit integer stating the length of the following chunk into the
@@ -104,7 +104,7 @@ class DiscreteCosineTransform : public Steganography
          * @param start The bit index to start encoding at.
          * @param chunk_length The length of the next chunk in bytes.
          */
-        void EncodeChunkLength(const int &, const unsigned int &);
+        void EncodeChunkLength(const int &start, const unsigned int &chunk_length);
 
         /**
          * Attempt to decode a chunk of information from the steganographic image.
@@ -114,7 +114,7 @@ class DiscreteCosineTransform : public Steganography
          * @return The chunk of information read from the steganographic image.
          * @exception DecodeException Thrown when decoding fails.
          */
-        std::vector<unsigned char> DecodeChunk(const int &, const int &);
+        std::vector<unsigned char> DecodeChunk(const int &start, const int &end);
 
         /**
          * Attempt to decode the 32bit integer stating the length of the following
@@ -124,7 +124,7 @@ class DiscreteCosineTransform : public Steganography
          * @return The length of the following chunk.
          * @exception DecodeException Thrown when decoding fails.
          */
-        unsigned int DecodeChunkLength(const int &);
+        unsigned int DecodeChunkLength(const int &start);
 
         /**
          * Swap two DCT coefficients.
@@ -135,7 +135,7 @@ class DiscreteCosineTransform : public Steganography
          * @param block A pointer to the block which is currently be operated on.
          * @param value The value which is being stored, will be 0 or 1.
          */
-        void SwapCoefficients(cv::Mat *, const int &);
+        void SwapCoefficients(cv::Mat *block, const int &value);
 };
 
 #endif // DISCRETE_COSINE_TRANSFORM_HPP
