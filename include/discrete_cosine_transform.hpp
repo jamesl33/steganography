@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include <iostream>
 #include <string>
+#include <thread>
 #include <tuple>
 #include <vector>
 #include <boost/filesystem.hpp>
@@ -91,9 +92,10 @@ class DiscreteCosineTransform : public Steganography
          * using the EncodeChunkLength function.
          *
          * @param start The bit index to start encoding at.
-         * @param chunk The chunk of information which will be encoded.
+         * @param it The position in the chunk of information to start encoding.
+         * @param en The position in the chunk of information to stop encoding.
          */
-        void EncodeChunk(const int &, const std::vector<unsigned char> &);
+        void EncodeChunk(const int &, std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator);
 
         /**
          * Encode a 32bit integer stating the length of the following chunk into the

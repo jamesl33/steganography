@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "discrete_cosine_transform.hpp"
 
+const int NUM_THREADS = std::thread::hardware_concurrency();
+
 void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path)
 {
     // Ensure that the carrier has enough room for the payload
@@ -31,13 +33,36 @@ void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path
 
     // Encode the filename into the carrier image
     this->EncodeChunkLength(0, filename_bytes.size());
-    this->EncodeChunk(32, filename_bytes);
+    this->EncodeChunk(32, filename_bytes.begin(), filename_bytes.end());
 
     // Read the payload into a vector<unsigned char>
     std::vector<unsigned char> payload_bytes = this->ReadPayload(payload_path);
 
     this->EncodeChunkLength(32 + filename_bytes.size() * 8, payload_bytes.size());
-    this->EncodeChunk(64 + filename_bytes.size() * 8, payload_bytes);
+
+    if (payload_bytes.size() < 10240)
+    {
+        this->EncodeChunk(64 + (filename_bytes.size() * 8), payload_bytes.begin(), payload_bytes.end());
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+
+        for (int i = 0; i < NUM_THREADS; i++)
+        {
+            threads.emplace_back(
+                    &DiscreteCosineTransform::EncodeChunk,
+                    this,
+                    64 + (filename_bytes.size() * 8) + (((payload_bytes.size() / NUM_THREADS) * 8) * i),
+                    payload_bytes.begin() + ((payload_bytes.size() / NUM_THREADS) * i),
+                    payload_bytes.end() - ((payload_bytes.size() / NUM_THREADS) * ((NUM_THREADS - 1) - i)));
+        }
+
+        for (std::thread &thr : threads)
+        {
+            thr.join();
+        }
+    }
 
     // Encode the payload into the carrier image
     boost::filesystem::path steg_image_filename = this->image_path.filename();
@@ -68,9 +93,9 @@ void DiscreteCosineTransform::Decode()
     this->WritePayload("steg-" + payload_filename, payload_bytes);
 }
 
-void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<unsigned char> &chunk)
+void DiscreteCosineTransform::EncodeChunk(const int &start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en)
 {
-    int bits_written = 0;
+    int bit = 0;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
@@ -101,7 +126,7 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
             cv::dct(block, trans);
 
             // Embed the current chunk bit in the carrier
-            this->SwapCoefficients(&trans, this->GetBit(chunk[bits_written / 8], bits_written % 8));
+            this->SwapCoefficients(&trans, this->GetBit(*it, bit % 8));
 
             // Perform the inverse dct
             cv::idct(trans, block);
@@ -116,7 +141,7 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
             }
 
             // We have finished embedding, clean up
-            if (++bits_written == chunk.size() * 8)
+            if (++bit % 8 == 0 && ++it == en)
             {
                 return;
             }
@@ -126,7 +151,7 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, const std::vector<un
 
 void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned int &chunk_length)
 {
-    int bits_written = 0;
+    int bit = 0;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
@@ -157,7 +182,7 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
             cv::dct(block, trans);
 
             // Swap N DCT coefficients
-            this->SwapCoefficients(&trans, this->GetBit(chunk_length, bits_written));
+            this->SwapCoefficients(&trans, this->GetBit(chunk_length, bit));
 
             // Perform the inverse dct
             cv::idct(trans, block);
@@ -172,7 +197,7 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
             }
 
             // We have finished embedding, clean up
-            if (++bits_written == 32)
+            if (++bit == 32)
             {
                 return;
             }
@@ -184,7 +209,7 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
 {
     std::vector<unsigned char> chunk_bytes((end - start) / 8);
 
-    int bits_read = 0;
+    int bit = 0;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
@@ -206,9 +231,9 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
             cv::dct(block, trans);
 
             // Read from N swapped DCT coefficients
-            this->SetBit(&chunk_bytes[bits_read / 8], bits_read % 8, (trans.at<float>(0, 2) < trans.at<float>(2, 0)));
+            this->SetBit(&chunk_bytes[bit / 8], bit % 8, (trans.at<float>(0, 2) < trans.at<float>(2, 0)));
 
-            if (++bits_read == end - start)
+            if (++bit == end - start)
             {
                 // We have finished decoding, return the chunk
                 return chunk_bytes;
@@ -223,7 +248,7 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
 {
     unsigned int chunk_length = 0;
 
-    int bits_read = 0;
+    int bit = 0;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
@@ -245,9 +270,9 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
             cv::dct(block, trans);
 
             // Read from N swapped DCT coefficients
-            this->SetBit(&chunk_length, bits_read, (trans.at<float>(0, 2) < trans.at<float>(2, 0)));
+            this->SetBit(&chunk_length, bit, (trans.at<float>(0, 2) < trans.at<float>(2, 0)));
 
-            if (++bits_read == 32)
+            if (++bit == 32)
             {
                 // We have decoded the integer, check if it's valid
                 if (chunk_length >= this->image_capacity || chunk_length == 0)
