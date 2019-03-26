@@ -15,9 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include <queue>
+#include <iostream>
 #include <string>
 #include <tuple>
+#include <vector>
+#include <boost/filesystem.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "steganography.hpp"
 #include "exceptions.hpp"
