@@ -83,8 +83,8 @@ Inheritance diagram for LeastSignificantBit:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9e6202fac3166f0afa56fdeb417df629"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a9e6202fac3166f0afa56fdeb417df629">LeastSignificantBit</a> (const boost::filesystem::path &amp;<a class="el" href="classSteganography.html#a71f77ceab71a40a72db410442f87d303">image_path</a>, int <a class="el" href="classLeastSignificantBit.html#a732c89291293a4ae619eab2203b212fd">bit_depth</a>)</td></tr>
-<tr class="separator:a9e6202fac3166f0afa56fdeb417df629"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29c0819492fd4db60a27807f150704c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a29c0819492fd4db60a27807f150704c0">LeastSignificantBit</a> (const boost::filesystem::path &amp;<a class="el" href="classSteganography.html#a71f77ceab71a40a72db410442f87d303">image_path</a>)</td></tr>
+<tr class="separator:a29c0819492fd4db60a27807f150704c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b785810c29190d2661029ea6502dcad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a4b785810c29190d2661029ea6502dcad">Encode</a> (const boost::filesystem::path &amp;)</td></tr>
 <tr class="separator:a4b785810c29190d2661029ea6502dcad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5e3552e214cde38e7ad3bbd906da2c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#ab5e3552e214cde38e7ad3bbd906da2c0">Decode</a> ()</td></tr>
@@ -95,29 +95,27 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a1bb8403901c417ce9211a984d901d873"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a1bb8403901c417ce9211a984d901d873">EncodeChunk</a> (const int &amp;, std::vector&lt; unsigned char &gt;::iterator, std::vector&lt; unsigned char &gt;::iterator)</td></tr>
-<tr class="separator:a1bb8403901c417ce9211a984d901d873"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4af02a7014cb8be5c3cbc6a4a4f5b278"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a4af02a7014cb8be5c3cbc6a4a4f5b278">EncodeChunkLength</a> (const int &amp;, const unsigned int &amp;)</td></tr>
-<tr class="separator:a4af02a7014cb8be5c3cbc6a4a4f5b278"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99e3d6e9e97eda981b9a43b2df0681b8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a99e3d6e9e97eda981b9a43b2df0681b8">DecodeChunk</a> (const int &amp;, const int &amp;)</td></tr>
-<tr class="separator:a99e3d6e9e97eda981b9a43b2df0681b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b2b6937e8c2a231f720dcb028ec38dd"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a8b2b6937e8c2a231f720dcb028ec38dd">DecodeChunkLength</a> (const int &amp;)</td></tr>
-<tr class="separator:a8b2b6937e8c2a231f720dcb028ec38dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea622da7d7f53ee564a26cbfb5c090a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#aea622da7d7f53ee564a26cbfb5c090a3">EncodeChunk</a> (const int &amp;start, std::vector&lt; unsigned char &gt;::iterator it, std::vector&lt; unsigned char &gt;::iterator en)</td></tr>
+<tr class="separator:aea622da7d7f53ee564a26cbfb5c090a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0ec51ac95eb01e835e45b541fe780fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#ab0ec51ac95eb01e835e45b541fe780fd">EncodeChunkLength</a> (const int &amp;start, const unsigned int &amp;chunk)</td></tr>
+<tr class="separator:ab0ec51ac95eb01e835e45b541fe780fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa01fb903e6a0e61baba27316bea6e4d6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#aa01fb903e6a0e61baba27316bea6e4d6">DecodeChunk</a> (const int &amp;start, const int &amp;end)</td></tr>
+<tr class="separator:aa01fb903e6a0e61baba27316bea6e4d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a523b2cc2c2d35aab384db182966e22d6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a523b2cc2c2d35aab384db182966e22d6">DecodeChunkLength</a> (const int &amp;start)</td></tr>
+<tr class="separator:a523b2cc2c2d35aab384db182966e22d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a732c89291293a4ae619eab2203b212fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a732c89291293a4ae619eab2203b212fd">bit_depth</a></td></tr>
-<tr class="separator:a732c89291293a4ae619eab2203b212fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67821ce887e3c482fe3ca98b64b022bf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a67821ce887e3c482fe3ca98b64b022bf">image_capacity</a></td></tr>
 <tr class="separator:a67821ce887e3c482fe3ca98b64b022bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_classSteganography"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classSteganography')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classSteganography.html">Steganography</a></td></tr>
-<tr class="memitem:ad6d7eb152dec0d14be64f3efbd3eec47 inherit pro_methods_classSteganography"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#ad6d7eb152dec0d14be64f3efbd3eec47">ReadPayload</a> (const boost::filesystem::path &amp;)</td></tr>
-<tr class="separator:ad6d7eb152dec0d14be64f3efbd3eec47 inherit pro_methods_classSteganography"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e25b18425b7a0b3147f8261b5c7f39d inherit pro_methods_classSteganography"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#a1e25b18425b7a0b3147f8261b5c7f39d">WritePayload</a> (const boost::filesystem::path &amp;, const std::vector&lt; unsigned char &gt; &amp;)</td></tr>
-<tr class="separator:a1e25b18425b7a0b3147f8261b5c7f39d inherit pro_methods_classSteganography"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa89ae2afa6d14d86c4613d9292c3a2a0 inherit pro_methods_classSteganography"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#aa89ae2afa6d14d86c4613d9292c3a2a0">ReadPayload</a> (const boost::filesystem::path &amp;payload_path)</td></tr>
+<tr class="separator:aa89ae2afa6d14d86c4613d9292c3a2a0 inherit pro_methods_classSteganography"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6d7ed76b5d9cbde8f6c426622b90ad2 inherit pro_methods_classSteganography"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#ae6d7ed76b5d9cbde8f6c426622b90ad2">WritePayload</a> (const boost::filesystem::path &amp;payload_path, const std::vector&lt; unsigned char &gt; &amp;payload)</td></tr>
+<tr class="separator:ae6d7ed76b5d9cbde8f6c426622b90ad2 inherit pro_methods_classSteganography"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7fc0e02ac0b44cc38286998321cc43c inherit pro_methods_classSteganography"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ae7fc0e02ac0b44cc38286998321cc43c inherit pro_methods_classSteganography"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSteganography.html#ae7fc0e02ac0b44cc38286998321cc43c">SetBit</a> (T *target, const int &amp;bit, const int &amp;value)</td></tr>
 <tr class="separator:ae7fc0e02ac0b44cc38286998321cc43c inherit pro_methods_classSteganography"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -131,8 +129,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a942b551944b31a7e12671de9170f80c0 inherit pro_attribs_classSteganography"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9e6202fac3166f0afa56fdeb417df629"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e6202fac3166f0afa56fdeb417df629">&#9670;&nbsp;</a></span>LeastSignificantBit()</h2>
+<a id="a29c0819492fd4db60a27807f150704c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29c0819492fd4db60a27807f150704c0">&#9670;&nbsp;</a></span>LeastSignificantBit()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -144,18 +142,8 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">LeastSignificantBit::LeastSignificantBit </td>
           <td>(</td>
           <td class="paramtype">const boost::filesystem::path &amp;&#160;</td>
-          <td class="paramname"><em>image_path</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>image_path</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>bit_depth</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -167,7 +155,6 @@ Additional Inherited Members</h2></td></tr>
 <p>Default constructor for <a class="el" href="classLeastSignificantBit.html">LeastSignificantBit</a> class overrides the default constructor for the <a class="el" href="classSteganography.html">Steganography</a> class. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">image_path</td><td>The path to the input carrier image. </td></tr>
-    <tr><td class="paramname">bit_depth</td><td>The amount of significant bits to set during the embedding process. </td></tr>
   </table>
   </dd>
 </dl>
@@ -203,8 +190,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a99e3d6e9e97eda981b9a43b2df0681b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99e3d6e9e97eda981b9a43b2df0681b8">&#9670;&nbsp;</a></span>DecodeChunk()</h2>
+<a id="aa01fb903e6a0e61baba27316bea6e4d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa01fb903e6a0e61baba27316bea6e4d6">&#9670;&nbsp;</a></span>DecodeChunk()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -254,8 +241,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a8b2b6937e8c2a231f720dcb028ec38dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b2b6937e8c2a231f720dcb028ec38dd">&#9670;&nbsp;</a></span>DecodeChunkLength()</h2>
+<a id="a523b2cc2c2d35aab384db182966e22d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a523b2cc2c2d35aab384db182966e22d6">&#9670;&nbsp;</a></span>DecodeChunkLength()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -326,17 +313,17 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classEncodeException.html">EncodeException</a></td><td>thrown when encoding fails. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classEncodeException.html">EncodeException</a></td><td>Thrown when encoding fails. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classSteganography.html#a978643dd284576000cfb9db6d8038410">Steganography</a>.</p>
+<p>Implements <a class="el" href="classSteganography.html#a939a59c57545a87848db73172ae35981">Steganography</a>.</p>
 
 </div>
 </div>
-<a id="a1bb8403901c417ce9211a984d901d873"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bb8403901c417ce9211a984d901d873">&#9670;&nbsp;</a></span>EncodeChunk()</h2>
+<a id="aea622da7d7f53ee564a26cbfb5c090a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea622da7d7f53ee564a26cbfb5c090a3">&#9670;&nbsp;</a></span>EncodeChunk()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,8 +374,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a4af02a7014cb8be5c3cbc6a4a4f5b278"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4af02a7014cb8be5c3cbc6a4a4f5b278">&#9670;&nbsp;</a></span>EncodeChunkLength()</h2>
+<a id="ab0ec51ac95eb01e835e45b541fe780fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0ec51ac95eb01e835e45b541fe780fd">&#9670;&nbsp;</a></span>EncodeChunkLength()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -406,7 +393,7 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>chunk_length</em>&#160;</td>
+          <td class="paramname"><em>chunk</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -432,29 +419,6 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a732c89291293a4ae619eab2203b212fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a732c89291293a4ae619eab2203b212fd">&#9670;&nbsp;</a></span>bit_depth</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">LeastSignificantBit::bit_depth</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>The amount of least significant bits to set during the embedding process. </p>
-
-</div>
-</div>
 <a id="a67821ce887e3c482fe3ca98b64b022bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a67821ce887e3c482fe3ca98b64b022bf">&#9670;&nbsp;</a></span>image_capacity</h2>
 

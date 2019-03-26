@@ -88,17 +88,17 @@ Inheritance diagram for Steganography:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab1f3dc64f1c171693a5459e9ca56398e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#ab1f3dc64f1c171693a5459e9ca56398e">Steganography</a> (const boost::filesystem::path &amp;<a class="el" href="classSteganography.html#a71f77ceab71a40a72db410442f87d303">image_path</a>)</td></tr>
 <tr class="separator:ab1f3dc64f1c171693a5459e9ca56398e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a978643dd284576000cfb9db6d8038410"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#a978643dd284576000cfb9db6d8038410">Encode</a> (const boost::filesystem::path &amp;)=0</td></tr>
-<tr class="separator:a978643dd284576000cfb9db6d8038410"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a939a59c57545a87848db73172ae35981"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#a939a59c57545a87848db73172ae35981">Encode</a> (const boost::filesystem::path &amp;payload_path)=0</td></tr>
+<tr class="separator:a939a59c57545a87848db73172ae35981"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa629b72efd2ed7a08b475710522630d9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#aa629b72efd2ed7a08b475710522630d9">Decode</a> ()=0</td></tr>
 <tr class="separator:aa629b72efd2ed7a08b475710522630d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ad6d7eb152dec0d14be64f3efbd3eec47"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#ad6d7eb152dec0d14be64f3efbd3eec47">ReadPayload</a> (const boost::filesystem::path &amp;)</td></tr>
-<tr class="separator:ad6d7eb152dec0d14be64f3efbd3eec47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e25b18425b7a0b3147f8261b5c7f39d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#a1e25b18425b7a0b3147f8261b5c7f39d">WritePayload</a> (const boost::filesystem::path &amp;, const std::vector&lt; unsigned char &gt; &amp;)</td></tr>
-<tr class="separator:a1e25b18425b7a0b3147f8261b5c7f39d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa89ae2afa6d14d86c4613d9292c3a2a0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#aa89ae2afa6d14d86c4613d9292c3a2a0">ReadPayload</a> (const boost::filesystem::path &amp;payload_path)</td></tr>
+<tr class="separator:aa89ae2afa6d14d86c4613d9292c3a2a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6d7ed76b5d9cbde8f6c426622b90ad2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteganography.html#ae6d7ed76b5d9cbde8f6c426622b90ad2">WritePayload</a> (const boost::filesystem::path &amp;payload_path, const std::vector&lt; unsigned char &gt; &amp;payload)</td></tr>
+<tr class="separator:ae6d7ed76b5d9cbde8f6c426622b90ad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7fc0e02ac0b44cc38286998321cc43c"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ae7fc0e02ac0b44cc38286998321cc43c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSteganography.html#ae7fc0e02ac0b44cc38286998321cc43c">SetBit</a> (T *target, const int &amp;bit, const int &amp;value)</td></tr>
 <tr class="separator:ae7fc0e02ac0b44cc38286998321cc43c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,8 +177,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a978643dd284576000cfb9db6d8038410"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a978643dd284576000cfb9db6d8038410">&#9670;&nbsp;</a></span>Encode()</h2>
+<a id="a939a59c57545a87848db73172ae35981"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a939a59c57545a87848db73172ae35981">&#9670;&nbsp;</a></span>Encode()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -190,7 +190,7 @@ Protected Attributes</h2></td></tr>
           <td class="memname">virtual void Steganography::Encode </td>
           <td>(</td>
           <td class="paramtype">const boost::filesystem::path &amp;&#160;</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramname"><em>payload_path</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -200,9 +200,20 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Encode Function that must be overridden by the subclass which encodes a payload into the carrier image using the steganographic technique defined in the subclass. </p>
+<p>Encode Function that must be overridden by the subclass which encodes a payload into the carrier image using the steganographic technique defined in the subclass. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">payload_path</td><td>Path to the file we are encoding. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classEncodeException.html">EncodeException</a></td><td>Thrown when encoding fails. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p>Implemented in <a class="el" href="classDiscreteCosineTransform.html#a7c85dc23405753f98b912746f5246c98">DiscreteCosineTransform</a>, and <a class="el" href="classLeastSignificantBit.html#a4b785810c29190d2661029ea6502dcad">LeastSignificantBit</a>.</p>
+<p>Implemented in <a class="el" href="classDiscreteCosineTransform.html#a70576aafcd9737695f788c442bb32601">DiscreteCosineTransform</a>, and <a class="el" href="classLeastSignificantBit.html#a4b785810c29190d2661029ea6502dcad">LeastSignificantBit</a>.</p>
 
 </div>
 </div>
@@ -259,8 +270,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="ad6d7eb152dec0d14be64f3efbd3eec47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6d7eb152dec0d14be64f3efbd3eec47">&#9670;&nbsp;</a></span>ReadPayload()</h2>
+<a id="aa89ae2afa6d14d86c4613d9292c3a2a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa89ae2afa6d14d86c4613d9292c3a2a0">&#9670;&nbsp;</a></span>ReadPayload()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -352,8 +363,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a1e25b18425b7a0b3147f8261b5c7f39d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e25b18425b7a0b3147f8261b5c7f39d">&#9670;&nbsp;</a></span>WritePayload()</h2>
+<a id="ae6d7ed76b5d9cbde8f6c426622b90ad2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6d7ed76b5d9cbde8f6c426622b90ad2">&#9670;&nbsp;</a></span>WritePayload()</h2>
 
 <div class="memitem">
 <div class="memproto">

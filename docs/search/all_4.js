@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['image',['image',['../classSteganography.html#a942b551944b31a7e12671de9170f80c0',1,'Steganography']]],
-  ['image_5fcapacity',['image_capacity',['../classLeastSignificantBit.html#a67821ce887e3c482fe3ca98b64b022bf',1,'LeastSignificantBit']]],
-  ['image_5fpath',['image_path',['../classSteganography.html#a71f77ceab71a40a72db410442f87d303',1,'Steganography']]],
-  ['imageexception',['ImageException',['../classImageException.html',1,'ImageException'],['../classImageException.html#ae815512f1679ba30d433d9c86e31e550',1,'ImageException::ImageException()']]]
+  ['leastsignificantbit',['LeastSignificantBit',['../classLeastSignificantBit.html',1,'LeastSignificantBit'],['../classLeastSignificantBit.html#a29c0819492fd4db60a27807f150704c0',1,'LeastSignificantBit::LeastSignificantBit()']]]
 ];
