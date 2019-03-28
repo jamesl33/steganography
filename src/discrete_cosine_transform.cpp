@@ -121,15 +121,6 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, std::vector<unsigned
             // A "working" copy of the block
             cv::Mat trans(cv::Size(8, 8), block.type());
 
-            // Centre the coefficients around 0
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    block.at<float>(x, y) -= 128;
-                }
-            }
-
             // Perform the forward dct
             cv::dct(block, trans);
 
@@ -138,15 +129,6 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, std::vector<unsigned
 
             // Perform the inverse dct
             cv::idct(trans, block);
-
-            // Recentre the coefficients around 128
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    block.at<float>(x, y) += 128;
-                }
-            }
 
             // We have finished embedding, clean up
             if (++bit % 8 == 0 && ++it == en)
@@ -177,15 +159,6 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
             // A "working" copy of the block
             cv::Mat trans(cv::Size(8, 8), block.type());
 
-            // Centre the coefficients around 0
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    block.at<float>(x, y) -= 128;
-                }
-            }
-
             // Perform the forward dct
             cv::dct(block, trans);
 
@@ -194,15 +167,6 @@ void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned
 
             // Perform the inverse dct
             cv::idct(trans, block);
-
-            // Recentre the coefficients around 128
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    block.at<float>(x, y) += 128;
-                }
-            }
 
             // We have finished embedding, clean up
             if (++bit == 32)
