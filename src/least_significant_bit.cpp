@@ -43,8 +43,8 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
     // Encode the payload length into the carrier image
     this->EncodeChunkLength(32 + (filename_bytes.size() * 8), payload_bytes.size());
 
-    // Encode the payload into the carrier image, multithread if payload is larger than 10kb
-    if (payload_bytes.size() < 10240)
+    // Encode the payload into the carrier image, multithread if more than 3.5KB per thread
+    if ((payload_bytes.size() / NUM_THREADS) <= 3500)
     {
         this->EncodeChunk(64 + (filename_bytes.size() * 8), payload_bytes.begin(), payload_bytes.end());
     }
