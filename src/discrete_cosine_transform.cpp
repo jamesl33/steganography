@@ -104,15 +104,17 @@ void DiscreteCosineTransform::Decode()
 void DiscreteCosineTransform::EncodeChunk(const int &start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en)
 {
     int bit = 0;
+    bool loops_initialised = false;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
         for (int col = 0; col < this->image.cols - 8; col += 8)
         {
-            if (row == 0 && col == 0)
+            if (!loops_initialised)
             {
                 row = start / ((this->image.cols - 8) / 8) * 8;
                 col = start % ((this->image.cols - 8) / 8) * 8;
+                loops_initialised = true;
             }
 
             // The current 8x8 block we are working on
@@ -142,15 +144,17 @@ void DiscreteCosineTransform::EncodeChunk(const int &start, std::vector<unsigned
 void DiscreteCosineTransform::EncodeChunkLength(const int &start, const unsigned int &chunk_length)
 {
     int bit = 0;
+    bool loops_initialised = false;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
         for (int col = 0; col < this->image.cols - 8; col += 8)
         {
-            if (row == 0 && col == 0)
+            if (!loops_initialised)
             {
                 row = start / ((this->image.cols - 8) / 8) * 8;
                 col = start % ((this->image.cols - 8) / 8) * 8;
+                loops_initialised = true;
             }
 
             // The current 8x8 block we are working on
@@ -182,15 +186,17 @@ std::vector<unsigned char> DiscreteCosineTransform::DecodeChunk(const int &start
     std::vector<unsigned char> chunk_bytes((end - start) / 8);
 
     int bit = 0;
+    bool loops_initialised = false;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
         for (int col = 0; col < this->image.cols - 8; col += 8)
         {
-            if (row == 0 && col == 0)
+            if (!loops_initialised)
             {
                 row = start / ((this->image.cols - 8) / 8) * 8;
                 col = start % ((this->image.cols - 8) / 8) * 8;
+                loops_initialised = true;
             }
 
             // The current 8x8 block we are working on
@@ -221,15 +227,17 @@ unsigned int DiscreteCosineTransform::DecodeChunkLength(const int &start)
     unsigned int chunk_length = 0;
 
     int bit = 0;
+    bool loops_initialised = false;
 
     for (int row = 0; row < this->image.rows - 8; row += 8)
     {
         for (int col = 0; col < this->image.cols - 8; col += 8)
         {
-            if (row == 0 && col == 0)
+            if (!loops_initialised)
             {
                 row = start / ((this->image.cols - 8) / 8) * 8;
                 col = start % ((this->image.cols - 8) / 8) * 8;
+                loops_initialised = true;
             }
 
             // The current 8x8 block we are working on
