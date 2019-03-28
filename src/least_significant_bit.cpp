@@ -43,23 +43,32 @@ void LeastSignificantBit::Encode(const boost::filesystem::path &payload_path)
     // Encode the payload length into the carrier image
     this->EncodeChunkLength(32 + (filename_bytes.size() * 8), payload_bytes.size());
 
-    // Encode the payload into the carrier image, multithread if more than 3.5KB per thread
-    if ((payload_bytes.size() / NUM_THREADS) <= 3500)
+    // Determine how many threads to use so that each thread encodes more than 3500KB
+    int encode_threads = NUM_THREADS;
+
+    while ((encode_threads > 1) && ((payload_bytes.size() / encode_threads)) < 3500)
+    {
+        encode_threads--;
+    }
+
+    // Encode the payload into the carrier image
+    if (encode_threads == 1)
     {
         this->EncodeChunk(64 + (filename_bytes.size() * 8), payload_bytes.begin(), payload_bytes.end());
     }
     else
     {
         std::vector<std::thread> threads;
+        threads.reserve(encode_threads);
 
-        for (int i = 0; i < NUM_THREADS; i++)
+        for (int i = 0; i < encode_threads; i++)
         {
-            threads.emplace_back(
-                    &LeastSignificantBit::EncodeChunk,
-                    this,
-                    64 + (filename_bytes.size() * 8) + (((payload_bytes.size() / NUM_THREADS) * 8) * i),
-                    payload_bytes.begin() + ((payload_bytes.size() / NUM_THREADS) * i),
-                    payload_bytes.end() - ((payload_bytes.size() / NUM_THREADS) * ((NUM_THREADS - 1) - i)));
+            threads.push_back(
+                    std::thread(&LeastSignificantBit::EncodeChunk,
+                        this,
+                        64 + (filename_bytes.size() * 8) + (((payload_bytes.size() / encode_threads) * 8) * i),
+                        payload_bytes.begin() + ((payload_bytes.size() / encode_threads) * i),
+                        payload_bytes.end() - ((payload_bytes.size() / encode_threads) * ((encode_threads - 1) - i))));
         }
 
         // Wait for all the threads to finish encoding
