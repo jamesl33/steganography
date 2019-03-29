@@ -40,10 +40,10 @@ void DiscreteCosineTransform::Encode(const boost::filesystem::path &payload_path
 
     this->EncodeChunkLength(32 + filename_bytes.size() * 8, payload_bytes.size());
 
-    // Determine how many threads to use so that each thread encodes more than 3500KB
+    // Determine how many threads to use so that each thread encodes more than 12B
     int encode_threads = NUM_THREADS;
 
-    while ((encode_threads > 1) && ((payload_bytes.size() / encode_threads)) < 3500)
+    while ((encode_threads > 1) && ((payload_bytes.size() / encode_threads)) < 12)
     {
         encode_threads--;
     }
