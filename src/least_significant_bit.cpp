@@ -87,14 +87,51 @@ void LeastSignificantBit::Decode()
 {
     // Decode the filename from the steganographic image
     unsigned int filename_length = this->DecodeChunkLength(0);
-    std::vector<unsigned char> filename_bytes = this->DecodeChunk(32, 32 + filename_length * 8);
+    std::vector<unsigned char> filename_bytes(filename_length);
+    this->DecodeChunk(32, filename_bytes.begin(), filename_bytes.end());
 
     // Convert the filename vector<unsigned char> to a string
     std::string payload_filename(filename_bytes.begin(), filename_bytes.end());
 
+    // Decode the payload length from the steganographic image
+    unsigned int payload_length = this->DecodeChunkLength(32 + (filename_length * 8));
+
+    // Determine how many threads to use so that each thread encodes more than 3500KB
+    int decode_threads = NUM_THREADS;
+
+    while ((decode_threads > 1) && (payload_length / decode_threads) < 3500)
+    {
+        decode_threads--;
+    }
+
     // Decode the payload from the steganographic image
-    unsigned int payload_length = this->DecodeChunkLength(32 + filename_length * 8);
-    std::vector<unsigned char> payload_bytes = this->DecodeChunk(64 + filename_length * 8, 64 + filename_length * 8 + payload_length * 8);
+    std::vector<unsigned char> payload_bytes(payload_length);
+
+    if (decode_threads == 1)
+    {
+        this->DecodeChunk(64 + (filename_length * 8), payload_bytes.begin(), payload_bytes.end());
+    }
+    else
+    {
+        std::vector<std::thread> threads;
+        threads.reserve(decode_threads);
+
+        for (int i = 0; i < decode_threads; i++)
+        {
+            threads.push_back(
+                std::thread(&LeastSignificantBit::DecodeChunk,
+                    this,
+                    64 + (filename_length * 8) + (((payload_length / decode_threads) * 8) * i),
+                    payload_bytes.begin() + ((payload_length / decode_threads) * i),
+                    payload_bytes.end() - ((payload_length / decode_threads) * ((decode_threads - 1) - i))));
+        }
+
+        // Wait for all the threads to finish encoding
+        for (std::thread &thr : threads)
+        {
+            thr.join();
+        }
+    }
 
     // Write the decoded payload
     this->WritePayload("steg-" + payload_filename, payload_bytes);
@@ -160,10 +197,8 @@ void LeastSignificantBit::EncodeChunkLength(const int &start, const unsigned int
     }
 }
 
-std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, const int &end)
+void LeastSignificantBit::DecodeChunk(const int start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en)
 {
-    std::vector<unsigned char> chunk((end - start) / 8);
-
     int bit = 0;
     bool loops_initialised = false;
 
@@ -181,11 +216,11 @@ std::vector<unsigned char> LeastSignificantBit::DecodeChunk(const int &start, co
                     loops_initialised = true;
                 }
 
-                this->SetBit(&chunk[bit / 8], bit % 8, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], 0));
+                this->SetBit(&(*it), bit % 8, this->GetBit(this->image.at<cv::Vec3b>(row, col)[cha], 0));
 
-                if (++bit == end - start)
+                if (++bit % 8 == 0 && ++it == en)
                 {
-                    return chunk;
+                    return;
                 }
             }
         }
