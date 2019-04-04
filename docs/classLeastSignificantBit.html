@@ -106,10 +106,10 @@ Public Member Functions</h2></td></tr>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:aea622da7d7f53ee564a26cbfb5c090a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#aea622da7d7f53ee564a26cbfb5c090a3">EncodeChunk</a> (const int &amp;start, std::vector&lt; unsigned char &gt;::iterator it, std::vector&lt; unsigned char &gt;::iterator en)</td></tr>
 <tr class="separator:aea622da7d7f53ee564a26cbfb5c090a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0ec51ac95eb01e835e45b541fe780fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#ab0ec51ac95eb01e835e45b541fe780fd">EncodeChunkLength</a> (const int &amp;start, const unsigned int &amp;chunk)</td></tr>
-<tr class="separator:ab0ec51ac95eb01e835e45b541fe780fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa01fb903e6a0e61baba27316bea6e4d6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#aa01fb903e6a0e61baba27316bea6e4d6">DecodeChunk</a> (const int &amp;start, const int &amp;end)</td></tr>
-<tr class="separator:aa01fb903e6a0e61baba27316bea6e4d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09380f245ec5d67e89443e49c5f97d37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a09380f245ec5d67e89443e49c5f97d37">EncodeChunkLength</a> (const int &amp;start, const unsigned int &amp;chunk_length)</td></tr>
+<tr class="separator:a09380f245ec5d67e89443e49c5f97d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fb1d30b4dfad994d91d5e531a896c43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a8fb1d30b4dfad994d91d5e531a896c43">DecodeChunk</a> (const int start, std::vector&lt; unsigned char &gt;::iterator it, std::vector&lt; unsigned char &gt;::iterator en)</td></tr>
+<tr class="separator:a8fb1d30b4dfad994d91d5e531a896c43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a523b2cc2c2d35aab384db182966e22d6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLeastSignificantBit.html#a523b2cc2c2d35aab384db182966e22d6">DecodeChunkLength</a> (const int &amp;start)</td></tr>
 <tr class="separator:a523b2cc2c2d35aab384db182966e22d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -199,8 +199,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="aa01fb903e6a0e61baba27316bea6e4d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa01fb903e6a0e61baba27316bea6e4d6">&#9670;&nbsp;</a></span>DecodeChunk()</h2>
+<a id="a8fb1d30b4dfad994d91d5e531a896c43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fb1d30b4dfad994d91d5e531a896c43">&#9670;&nbsp;</a></span>DecodeChunk()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -209,16 +209,22 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; unsigned char &gt; LeastSignificantBit::DecodeChunk </td>
+          <td class="memname">void LeastSignificantBit::DecodeChunk </td>
           <td>(</td>
-          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>start</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int &amp;&#160;</td>
-          <td class="paramname"><em>end</em>&#160;</td>
+          <td class="paramtype">std::vector&lt; unsigned char &gt;::iterator&#160;</td>
+          <td class="paramname"><em>it</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; unsigned char &gt;::iterator&#160;</td>
+          <td class="paramname"><em>en</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -236,11 +242,11 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">start</td><td>The bit index to start decoding at. </td></tr>
-    <tr><td class="paramname">end</td><td>The bit index to stop decoding at. </td></tr>
+    <tr><td class="paramname">it</td><td>An iterator to a start position in the payload_bytes vector. </td></tr>
+    <tr><td class="paramname">en</td><td>An iterator to an end position in the payload_bytes vector. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The chunk of information read from the steganographic image. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classDecodeException.html">DecodeException</a></td><td>Thrown when decoding fails. </td></tr>
@@ -383,8 +389,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ab0ec51ac95eb01e835e45b541fe780fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0ec51ac95eb01e835e45b541fe780fd">&#9670;&nbsp;</a></span>EncodeChunkLength()</h2>
+<a id="a09380f245ec5d67e89443e49c5f97d37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09380f245ec5d67e89443e49c5f97d37">&#9670;&nbsp;</a></span>EncodeChunkLength()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -402,7 +408,7 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>chunk</em>&#160;</td>
+          <td class="paramname"><em>chunk_length</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

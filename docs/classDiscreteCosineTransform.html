@@ -108,8 +108,8 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:ab6160f1152f047d42a81c9b583efa29c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4379cf82f13bac3e0d337214566204bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a4379cf82f13bac3e0d337214566204bc">EncodeChunkLength</a> (const int &amp;start, const unsigned int &amp;chunk_length)</td></tr>
 <tr class="separator:a4379cf82f13bac3e0d337214566204bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e37541e557ce3e1dcc4941eda2e3aae"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#a2e37541e557ce3e1dcc4941eda2e3aae">DecodeChunk</a> (const int &amp;start, const int &amp;end)</td></tr>
-<tr class="separator:a2e37541e557ce3e1dcc4941eda2e3aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe76c558f97b7ee2c3a4ef963fb8f76a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#abe76c558f97b7ee2c3a4ef963fb8f76a">DecodeChunk</a> (const int start, std::vector&lt; unsigned char &gt;::iterator it, std::vector&lt; unsigned char &gt;::iterator en)</td></tr>
+<tr class="separator:abe76c558f97b7ee2c3a4ef963fb8f76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af13799275f5522bd73d64b37a1054b1a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#af13799275f5522bd73d64b37a1054b1a">DecodeChunkLength</a> (const int &amp;start)</td></tr>
 <tr class="separator:af13799275f5522bd73d64b37a1054b1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb462f1d6992f2136f10c6106f6f6d66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiscreteCosineTransform.html#abb462f1d6992f2136f10c6106f6f6d66">SwapCoefficients</a> (cv::Mat *block, const int &amp;value)</td></tr>
@@ -218,8 +218,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a2e37541e557ce3e1dcc4941eda2e3aae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e37541e557ce3e1dcc4941eda2e3aae">&#9670;&nbsp;</a></span>DecodeChunk()</h2>
+<a id="abe76c558f97b7ee2c3a4ef963fb8f76a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe76c558f97b7ee2c3a4ef963fb8f76a">&#9670;&nbsp;</a></span>DecodeChunk()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -228,16 +228,22 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; unsigned char &gt; DiscreteCosineTransform::DecodeChunk </td>
+          <td class="memname">void DiscreteCosineTransform::DecodeChunk </td>
           <td>(</td>
-          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>start</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int &amp;&#160;</td>
-          <td class="paramname"><em>end</em>&#160;</td>
+          <td class="paramtype">std::vector&lt; unsigned char &gt;::iterator&#160;</td>
+          <td class="paramname"><em>it</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; unsigned char &gt;::iterator&#160;</td>
+          <td class="paramname"><em>en</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -255,11 +261,11 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">start</td><td>The bit index to start decoding at. </td></tr>
-    <tr><td class="paramname">end</td><td>The bit index to stop decoding at. </td></tr>
+    <tr><td class="paramname">it</td><td>An iterator to a start position in the payload_bytes vector. </td></tr>
+    <tr><td class="paramname">en</td><td>An iterator to an end position in the payload_bytes vector. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The chunk of information read from the steganographic image. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classDecodeException.html">DecodeException</a></td><td>Thrown when decoding fails. </td></tr>
