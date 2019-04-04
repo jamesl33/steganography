@@ -110,11 +110,11 @@ class DiscreteCosineTransform : public Steganography
          * Attempt to decode a chunk of information from the steganographic image.
          *
          * @param start The bit index to start decoding at.
-         * @param end The bit index to stop decoding at.
-         * @return The chunk of information read from the steganographic image.
+         * @param it An iterator to a start position in the payload_bytes vector.
+         * @param en An iterator to an end position in the payload_bytes vector.
          * @exception DecodeException Thrown when decoding fails.
          */
-        std::vector<unsigned char> DecodeChunk(const int &start, const int &end);
+        void DecodeChunk(const int start, std::vector<unsigned char>::iterator it, std::vector<unsigned char>::iterator en);
 
         /**
          * Attempt to decode the 32bit integer stating the length of the following
