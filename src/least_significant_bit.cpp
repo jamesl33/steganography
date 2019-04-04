@@ -96,7 +96,7 @@ void LeastSignificantBit::Decode()
     // Decode the payload length from the steganographic image
     unsigned int payload_length = this->DecodeChunkLength(32 + (filename_length * 8));
 
-    // Determine how many threads to use so that each thread encodes more than 3500KB
+    // Determine how many threads to use so that each thread decodes more than 3500KB
     int decode_threads = NUM_THREADS;
 
     while ((decode_threads > 1) && (payload_length / decode_threads) < 3500)
